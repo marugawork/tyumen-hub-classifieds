@@ -1,20 +1,18 @@
 import { useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Search, TrendingUp, Shield, ChevronRight, Crown, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { TrendingUp, Shield, ChevronRight, Crown, MapPin } from "lucide-react";
 import { useDistrict } from "@/contexts/DistrictContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import ListingCard from "@/components/ListingCard";
 import AdBanner from "@/components/AdBanner";
+import SearchBar from "@/components/SearchBar";
 import { listings, filterListings } from "@/data/listings";
-import { districts, districtToSlug } from "@/data/districts";
-import { useState } from "react";
+import { districtToSlug } from "@/data/districts";
 
 export default function Index() {
-  const { selectedDistrict, setSelectedDistrict, districtLabel } = useDistrict();
-  const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
+  const { selectedDistrict, districtLabel } = useDistrict();
 
   const filteredListings = useMemo(
     () => selectedDistrict ? filterListings({ district: selectedDistrict, sortBy: "date" }) : listings,
@@ -41,14 +39,6 @@ export default function Index() {
     [selectedDistrict, filteredListings]
   );
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchQuery.trim()) params.set("q", searchQuery.trim());
-    if (selectedDistrict) params.set("district", districtToSlug(selectedDistrict));
-    navigate(`/search?${params.toString()}`);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -56,36 +46,7 @@ export default function Index() {
       {/* Search block */}
       <section className="py-10 md:py-14">
         <div className="container-main">
-          <form onSubmit={handleSearch} className="flex w-full">
-            <input
-              type="text"
-              placeholder="Что ищете? Например: квартира, iPhone, автомобиль..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="flex-1 h-14 md:h-16 px-6 rounded-l-2xl border border-r-0 border-input bg-card text-base md:text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-            />
-            <div className="relative h-14 md:h-16 shrink-0">
-              <MapPin className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <select
-                value={selectedDistrict}
-                onChange={e => setSelectedDistrict(e.target.value)}
-                className="h-full appearance-none bg-card border border-r-0 border-input pl-9 pr-8 text-sm font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-              >
-                <option value="">Все районы</option>
-                {districts.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-              <ChevronRight className="w-3 h-3 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 rotate-90 pointer-events-none" />
-            </div>
-            <button
-              type="submit"
-              className="h-14 md:h-16 px-8 md:px-10 rounded-r-2xl bg-accent text-accent-foreground font-bold text-base md:text-lg hover:bg-accent/90 transition-colors flex items-center gap-2"
-            >
-              <Search className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="hidden sm:inline">Найти</span>
-            </button>
-          </form>
+          <SearchBar />
 
           {/* District link when selected */}
           {selectedDistrict && (

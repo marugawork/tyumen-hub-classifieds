@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart, MapPin, Clock, Eye, Crown } from "lucide-react";
 import { type Listing } from "@/data/listings";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useDistrict } from "@/contexts/DistrictContext";
+import { districtToSlug } from "@/data/districts";
 
 function formatPrice(price: number, currency: string): string {
   if (price === 0) return "Бесплатно";
@@ -24,6 +26,8 @@ interface ListingCardProps {
 
 export default function ListingCard({ listing, compact }: ListingCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { setSelectedDistrict } = useDistrict();
+  const navigate = useNavigate();
   const fav = isFavorite(listing.id);
   const isVip = listing.vip;
 
@@ -81,10 +85,18 @@ export default function ListingCard({ listing, compact }: ListingCardProps) {
 
         {/* Meta */}
         <div className={`mt-2 flex flex-col gap-1 text-xs text-muted-foreground ${compact ? "mt-1.5" : ""}`}>
-          <Link to={`/search?district=${encodeURIComponent(listing.district)}`} className="flex items-center gap-1 hover:text-accent transition-colors" onClick={e => e.stopPropagation()}>
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              e.preventDefault();
+              setSelectedDistrict(listing.district);
+              navigate(`/district/${districtToSlug(listing.district)}`);
+            }}
+            className="flex items-center gap-1 hover:text-accent transition-colors cursor-pointer bg-transparent border-none p-0 text-xs text-muted-foreground"
+          >
             <MapPin className="w-3 h-3 shrink-0" />
             <span className="truncate">{listing.district}, Нефтеюганск</span>
-          </Link>
+          </button>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
