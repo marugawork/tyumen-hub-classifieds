@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import ListingCard from "@/components/ListingCard";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
+import SearchBar from "@/components/SearchBar";
 import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/categories";
 import { filterListings, listings } from "@/data/listings";
 import { useDistrict } from "@/contexts/DistrictContext";
@@ -31,6 +32,9 @@ export default function CategoryPage() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container-main py-6">
+          <div className="mb-6">
+            <SearchBar compact />
+          </div>
           <BreadcrumbNav crumbs={[{ label: "Все категории" }]} />
           <h1 className="text-2xl font-extrabold text-foreground mb-6">Все категории</h1>
           <div className="space-y-4">
@@ -82,6 +86,9 @@ export default function CategoryPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container-main py-6">
+        <div className="mb-6">
+          <SearchBar compact />
+        </div>
         <BreadcrumbNav crumbs={crumbs} />
         <div className="flex items-center gap-3 mb-4">
           <Icon className="w-6 h-6" style={{ color: `hsl(var(--cat-${category.colorVar.replace("cat-", "")}))` }} />

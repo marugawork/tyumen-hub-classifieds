@@ -5,21 +5,16 @@ import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import ListingCard from "@/components/ListingCard";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
+import SearchBar from "@/components/SearchBar";
 import { filterListings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
 import NotFound from "./NotFound";
 
-function districtFullLabel(d: string): string {
-  const m = d.match(/^(\d+)\s*мкр$/);
-  if (m) return `${m[1]} микрорайон`;
-  return d;
-}
-
 export default function DistrictPage() {
   const { slug } = useParams<{ slug: string }>();
   const districtName = slug ? slugToDistrict(slug) : undefined;
-  const { setSelectedDistrict } = useDistrict();
+  const { setSelectedDistrict, districtLabel } = useDistrict();
   const [filters, setFilters] = useState<FilterValues>({ sortBy: "date" });
 
   // Sync global filter when visiting district page
@@ -34,12 +29,15 @@ export default function DistrictPage() {
 
   if (!districtName) return <NotFound />;
 
-  const label = districtFullLabel(districtName);
+  const label = districtLabel || districtName;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container-main py-6">
+        <div className="mb-6">
+          <SearchBar compact />
+        </div>
         <BreadcrumbNav crumbs={[
           { label: "Нефтеюганск", href: "/" },
           { label: label },
