@@ -8,6 +8,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 import ListingCard from "@/components/ListingCard";
 import AdBanner from "@/components/AdBanner";
 import SearchBar from "@/components/SearchBar";
+import InfiniteListingGrid from "@/components/InfiniteListingGrid";
 import { listings, filterListings } from "@/data/listings";
 import { districtToSlug } from "@/data/districts";
 
@@ -23,21 +24,23 @@ export default function Index() {
     () => filteredListings.filter(l => l.vip).slice(0, 4),
     [filteredListings]
   );
-  const popularListings = useMemo(
-    () => [...filteredListings].sort((a, b) => b.views - a.views).slice(0, 8),
-    [filteredListings]
-  );
+
   const newListings = useMemo(
     () => [...filteredListings].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8),
     [filteredListings]
   );
 
-  const districtPopular = useMemo(
-    () => selectedDistrict
-      ? [...filteredListings].sort((a, b) => b.views - a.views).slice(0, 4)
-      : [],
-    [selectedDistrict, filteredListings]
+  const popularListings = useMemo(
+    () => [...filteredListings].sort((a, b) => (b.views + b.favorites) - (a.views + a.favorites)).slice(0, 8),
+    [filteredListings]
   );
+
+  const allListings = useMemo(
+    () => [...filteredListings].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [filteredListings]
+  );
+
+  const suffix = districtLabel ? ` — ${districtLabel}` : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,8 +50,6 @@ export default function Index() {
       <section className="py-10 md:py-14">
         <div className="container-main">
           <SearchBar />
-
-          {/* District link when selected */}
           {selectedDistrict && (
             <div className="mt-3 flex items-center gap-2">
               <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -104,37 +105,12 @@ export default function Index() {
         <CategoryGrid />
       </section>
 
-      {/* Popular in district */}
-      {selectedDistrict && districtPopular.length > 0 && (
-        <section className="container-main pb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <MapPin className="w-5 h-5 text-accent" />
-            <h2 className="text-2xl font-extrabold text-foreground">Популярное в {districtLabel}</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {districtPopular.map(l => (
-              <ListingCard key={l.id} listing={l} />
-            ))}
-          </div>
-          <div className="mt-4 text-center">
-            <Link
-              to={`/district/${districtToSlug(selectedDistrict)}`}
-              className="text-sm text-accent font-semibold hover:text-accent/80 transition-colors"
-            >
-              Все объявления в {districtLabel} →
-            </Link>
-          </div>
-        </section>
-      )}
-
-      {/* VIP + sidebar ad */}
+      {/* VIP */}
       {vipListings.length > 0 && (
         <section className="container-main pb-12">
           <div className="flex items-center gap-2 mb-6">
             <Crown className="w-5 h-5 text-vip" />
-            <h2 className="text-2xl font-extrabold text-foreground">
-              VIP объявления{districtLabel ? ` — ${districtLabel}` : ""}
-            </h2>
+            <h2 className="text-2xl font-extrabold text-foreground">VIP объявления{suffix}</h2>
           </div>
           <div className="flex gap-6">
             <div className="hidden lg:block w-48 shrink-0">
@@ -157,26 +133,11 @@ export default function Index() {
         <AdBanner format="inline" />
       </div>
 
-      {/* Popular */}
-      <section className="container-main pb-12">
-        <div className="flex items-center gap-2 mb-6">
-          <TrendingUp className="w-5 h-5 text-accent" />
-          <h2 className="text-2xl font-extrabold text-foreground">
-            {districtLabel ? `Популярное — ${districtLabel}` : "Популярное"}
-          </h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {popularListings.map(l => (
-            <ListingCard key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
-
-      {/* New */}
+      {/* Новое (New) */}
       <section className="container-main pb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-extrabold text-foreground">
-            {districtLabel ? `Новые объявления — ${districtLabel}` : "Новые объявления"}
+            {districtLabel ? `Новое${suffix}` : "Новое"}
           </h2>
           <Link to="/search" className="text-sm text-accent font-semibold hover:text-accent/80 transition-colors flex items-center gap-1">
             Смотреть все <ChevronRight className="w-4 h-4" />
@@ -189,10 +150,31 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Inline ad before promo */}
+      {/* Популярное (Popular) — single block */}
+      <section className="container-main pb-12">
+        <div className="flex items-center gap-2 mb-6">
+          <TrendingUp className="w-5 h-5 text-accent" />
+          <h2 className="text-2xl font-extrabold text-foreground">Популярное{suffix}</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {popularListings.map(l => (
+            <ListingCard key={l.id} listing={l} />
+          ))}
+        </div>
+      </section>
+
+      {/* Inline ad before all listings */}
       <div className="container-main pb-8">
         <AdBanner format="horizontal" />
       </div>
+
+      {/* Все объявления (All listings — infinite scroll) */}
+      <section className="container-main pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-extrabold text-foreground">Все объявления{suffix}</h2>
+        </div>
+        <InfiniteListingGrid listings={allListings} />
+      </section>
 
       {/* Monetization banner */}
       <section className="container-main pb-12">

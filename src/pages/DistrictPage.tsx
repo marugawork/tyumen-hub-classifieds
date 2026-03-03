@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import ListingCard from "@/components/ListingCard";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
+import InfiniteListingGrid from "@/components/InfiniteListingGrid";
 import { filterListings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
@@ -17,7 +17,6 @@ export default function DistrictPage() {
   const { setSelectedDistrict, districtLabel } = useDistrict();
   const [filters, setFilters] = useState<FilterValues>({ sortBy: "date" });
 
-  // Sync global filter when visiting district page
   useEffect(() => {
     if (districtName) setSelectedDistrict(districtName);
   }, [districtName, setSelectedDistrict]);
@@ -47,8 +46,8 @@ export default function DistrictPage() {
         </h1>
         <p className="text-sm text-muted-foreground mb-4">Найдено {results.length} объявлений</p>
         <FilterPanel filters={filters} onChange={setFilters} />
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {results.map(l => <ListingCard key={l.id} listing={l} />)}
+        <div className="mt-4">
+          <InfiniteListingGrid listings={results} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">

@@ -3,9 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import ListingCard from "@/components/ListingCard";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
+import InfiniteListingGrid from "@/components/InfiniteListingGrid";
 import { filterListings } from "@/data/listings";
 import { useDistrict } from "@/contexts/DistrictContext";
 import { slugToDistrict } from "@/data/districts";
@@ -36,15 +36,11 @@ export default function SearchResults() {
 
   const results = useMemo(() => filterListings({ ...filters, query }), [filters, query]);
 
-  const label = districtLabel;
+  const suffix = districtLabel ? ` — ${districtLabel}` : "";
 
-  const title = label
-    ? query ? `Результаты поиска — ${label}` : `Объявления — ${label}`
-    : query ? `Результаты: «${query}»` : "Все объявления";
+  const title = query ? `Результаты: «${query}»${suffix}` : `Все объявления${suffix}`;
 
-  const crumbLabel = label
-    ? query ? `Поиск: «${query}» — ${label}` : label
-    : query ? `Поиск: «${query}»` : "Все объявления";
+  const crumbLabel = query ? `Поиск: «${query}»${suffix}` : `Все объявления${suffix}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,14 +50,14 @@ export default function SearchResults() {
           <SearchBar compact initialQuery={query} />
         </div>
         <BreadcrumbNav crumbs={[
-          ...(label ? [{ label: "Нефтеюганск", href: "/" }] : []),
+          ...(districtLabel ? [{ label: "Нефтеюганск", href: "/" }] : []),
           { label: crumbLabel },
         ]} />
         <h1 className="text-2xl font-extrabold text-foreground mb-1">{title}</h1>
         <p className="text-sm text-muted-foreground mb-4">Найдено {results.length} объявлений</p>
         <FilterPanel filters={filters} onChange={handleFiltersChange} />
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {results.map(l => <ListingCard key={l.id} listing={l} />)}
+        <div className="mt-4">
+          <InfiniteListingGrid listings={results} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
@@ -74,4 +70,3 @@ export default function SearchResults() {
     </div>
   );
 }
-
