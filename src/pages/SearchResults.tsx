@@ -16,21 +16,23 @@ export default function SearchResults() {
   const districtSlugParam = searchParams.get("district") || "";
   const { selectedDistrict, setSelectedDistrict, districtLabel } = useDistrict();
 
-  // Sync URL district param to global context on mount
   useEffect(() => {
-    if (districtSlugParam) {
-      const d = slugToDistrict(districtSlugParam);
-      if (d) setSelectedDistrict(d);
-    }
+    if (!districtSlugParam) return;
+    const districtFromUrl = slugToDistrict(districtSlugParam);
+    if (districtFromUrl) setSelectedDistrict(districtFromUrl);
   }, [districtSlugParam, setSelectedDistrict]);
 
-  const activeDistrict = selectedDistrict || "";
-
-  const [filters, setFilters] = useState<FilterValues>({ sortBy: "date", district: activeDistrict || undefined });
+  const [filters, setFilters] = useState<FilterValues>({ sortBy: "date", district: selectedDistrict || undefined });
 
   useEffect(() => {
-    setFilters(f => ({ ...f, district: activeDistrict || undefined }));
-  }, [activeDistrict]);
+    setFilters(prev => ({ ...prev, district: selectedDistrict || undefined }));
+  }, [selectedDistrict]);
+
+  const handleFiltersChange = (nextFilters: FilterValues) => {
+    setFilters(nextFilters);
+    const nextDistrict = nextFilters.district || "";
+    if (nextDistrict !== selectedDistrict) setSelectedDistrict(nextDistrict);
+  };
 
   const results = useMemo(() => filterListings({ ...filters, query }), [filters, query]);
 
@@ -57,7 +59,7 @@ export default function SearchResults() {
         ]} />
         <h1 className="text-2xl font-extrabold text-foreground mb-1">{title}</h1>
         <p className="text-sm text-muted-foreground mb-4">Найдено {results.length} объявлений</p>
-        <FilterPanel filters={filters} onChange={setFilters} />
+        <FilterPanel filters={filters} onChange={handleFiltersChange} />
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {results.map(l => <ListingCard key={l.id} listing={l} />)}
         </div>
@@ -72,3 +74,4 @@ export default function SearchResults() {
     </div>
   );
 }
+
