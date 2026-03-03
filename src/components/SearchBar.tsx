@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, MapPin, ChevronRight } from "lucide-react";
 import { useDistrict } from "@/contexts/DistrictContext";
 import { districts, districtToSlug } from "@/data/districts";
@@ -14,13 +14,40 @@ interface SearchBarProps {
 export default function SearchBar({ initialQuery = "", compact = false }: SearchBarProps) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const { selectedDistrict, setSelectedDistrict } = useDistrict();
+  const districtRef = useRef(selectedDistrict);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    districtRef.current = selectedDistrict;
+  }, [selectedDistrict]);
+
+  const syncDistrictInCurrentUrl = useCallback((district: string) => {
+    const params = new URLSearchParams(location.search);
+    if (district) params.set("district", districtToSlug(district));
+    else params.delete("district");
+
+    const nextSearch = params.toString();
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch ? `?${nextSearch}` : "",
+      },
+      { replace: true }
+    );
+  }, [location.pathname, location.search, navigate]);
+
+  const handleDistrictChange = (district: string) => {
+    districtRef.current = district;
+    setSelectedDistrict(district);
+    syncDistrictInCurrentUrl(district);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set("q", searchQuery.trim());
-    if (selectedDistrict) params.set("district", districtToSlug(selectedDistrict));
+    if (districtRef.current) params.set("district", districtToSlug(districtRef.current));
     navigate(`/search?${params.toString()}`);
   };
 
@@ -43,7 +70,7 @@ export default function SearchBar({ initialQuery = "", compact = false }: Search
         <MapPin className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         <select
           value={selectedDistrict}
-          onChange={e => setSelectedDistrict(e.target.value)}
+          onChange={e => handleDistrictChange(e.target.value)}
           className={`h-full appearance-none bg-card border border-r-0 border-input pl-9 pr-8 text-sm font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all`}
         >
           <option value="">Все районы</option>
@@ -63,3 +90,4 @@ export default function SearchBar({ initialQuery = "", compact = false }: Search
     </form>
   );
 }
+

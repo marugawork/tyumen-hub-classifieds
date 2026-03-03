@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { slugToDistrict } from "@/data/districts";
 
 interface DistrictContextType {
   selectedDistrict: string;
@@ -20,34 +21,67 @@ function toLabel(district: string): string {
   return district;
 }
 
-const STORAGE_KEY = "nyu_district";
+const STORAGE_KEY = "selectedDistrict";
+
+function readDistrictFromUrl(): string {
+  try {
+    const districtSlug = new URLSearchParams(window.location.search).get("district");
+    if (!districtSlug) return "";
+    return slugToDistrict(districtSlug) || "";
+  } catch {
+    return "";
+  }
+}
+
+function readInitialDistrict(): string {
+  const districtFromUrl = readDistrictFromUrl();
+  if (districtFromUrl) return districtFromUrl;
+
+  try {
+    return localStorage.getItem(STORAGE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
 
 export function DistrictProvider({ children }: { children: ReactNode }) {
-  const [selectedDistrict, setSelectedDistrictRaw] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) || "";
-    } catch {
-      return "";
-    }
-  });
+  const [selectedDistrict, setSelectedDistrictRaw] = useState<string>(() => readInitialDistrict());
 
-  const setSelectedDistrict = (d: string) => {
-    setSelectedDistrictRaw(d);
+  const setSelectedDistrict = useCallback((district: string) => {
+    setSelectedDistrictRaw(prev => (prev === district ? prev : district));
+
     try {
-      if (d) localStorage.setItem(STORAGE_KEY, d);
+      if (district) localStorage.setItem(STORAGE_KEY, district);
       else localStorage.removeItem(STORAGE_KEY);
     } catch {}
-  };
+  }, []);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const districtFromUrl = readDistrictFromUrl();
+      setSelectedDistrictRaw(prev => (prev === districtFromUrl ? prev : districtFromUrl));
+
+      try {
+        if (districtFromUrl) localStorage.setItem(STORAGE_KEY, districtFromUrl);
+        else localStorage.removeItem(STORAGE_KEY);
+      } catch {}
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const districtLabel = toLabel(selectedDistrict);
 
-  return (
-    <DistrictContext.Provider value={{ selectedDistrict, setSelectedDistrict, districtLabel }}>
-      {children}
-    </DistrictContext.Provider>
+  const value = useMemo(
+    () => ({ selectedDistrict, setSelectedDistrict, districtLabel }),
+    [selectedDistrict, setSelectedDistrict, districtLabel]
   );
+
+  return <DistrictContext.Provider value={value}>{children}</DistrictContext.Provider>;
 }
 
 export function useDistrict() {
   return useContext(DistrictContext);
 }
+

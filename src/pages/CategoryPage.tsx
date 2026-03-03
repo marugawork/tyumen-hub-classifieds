@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -8,24 +8,45 @@ import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/categories";
 import { filterListings, listings } from "@/data/listings";
+import { slugToDistrict } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
 
 export default function CategoryPage() {
   const { categorySlug, subcategorySlug } = useParams();
-  const { selectedDistrict, districtLabel } = useDistrict();
+  const [searchParams] = useSearchParams();
+  const districtSlugParam = searchParams.get("district") || "";
+  const { selectedDistrict, districtLabel, setSelectedDistrict } = useDistrict();
   const category = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
   const subcategory = category && subcategorySlug ? getSubcategoryBySlug(categorySlug!, subcategorySlug) : undefined;
 
+  useEffect(() => {
+    if (!districtSlugParam) return;
+    const districtFromUrl = slugToDistrict(districtSlugParam);
+    if (districtFromUrl) setSelectedDistrict(districtFromUrl);
+  }, [districtSlugParam, setSelectedDistrict]);
+
   const [filters, setFilters] = useState<FilterValues>({
-    categoryId: category?.id, subcategoryId: subcategory?.id, sortBy: "date",
+    categoryId: category?.id,
+    subcategoryId: subcategory?.id,
+    district: selectedDistrict || undefined,
+    sortBy: "date",
   });
+
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, district: selectedDistrict || undefined }));
+  }, [selectedDistrict]);
+
+  const handleFiltersChange = (nextFilters: FilterValues) => {
+    setFilters(nextFilters);
+    const nextDistrict = nextFilters.district || "";
+    if (nextDistrict !== selectedDistrict) setSelectedDistrict(nextDistrict);
+  };
 
   const results = useMemo(() => filterListings({
     ...filters,
     categoryId: category?.id,
     subcategoryId: subcategory?.id || filters.subcategoryId,
-    district: selectedDistrict || filters.district,
-  }), [filters, category, subcategory, selectedDistrict]);
+  }), [filters, category, subcategory]);
 
   if (!category) {
     return (
@@ -105,7 +126,7 @@ export default function CategoryPage() {
             ))}
           </div>
         )}
-        <FilterPanel filters={filters} onChange={setFilters} showCategory={false} />
+        <FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {results.map(l => <ListingCard key={l.id} listing={l} />)}
         </div>
@@ -119,3 +140,4 @@ export default function CategoryPage() {
     </div>
   );
 }
+
