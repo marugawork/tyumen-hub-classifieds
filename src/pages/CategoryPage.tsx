@@ -3,9 +3,9 @@ import { useParams, Link, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import ListingCard from "@/components/ListingCard";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
+import InfiniteListingGrid from "@/components/InfiniteListingGrid";
 import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/categories";
 import { filterListings, listings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
@@ -90,7 +90,8 @@ export default function CategoryPage() {
 
   const Icon = category.icon;
   const catName = subcategory ? subcategory.name : category.name;
-  const headingName = districtLabel ? `${catName} — ${districtLabel}` : catName;
+  const suffix = districtLabel ? ` — ${districtLabel}` : "";
+  const headingName = `${catName}${suffix}`;
 
   const crumbs = [
     ...(districtLabel ? [{ label: "Нефтеюганск", href: "/" }] : []),
@@ -127,8 +128,8 @@ export default function CategoryPage() {
           </div>
         )}
         <FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {results.map(l => <ListingCard key={l.id} listing={l} />)}
+        <div className="mt-4">
+          <InfiniteListingGrid listings={results} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
@@ -140,4 +141,3 @@ export default function CategoryPage() {
     </div>
   );
 }
-
