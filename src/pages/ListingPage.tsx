@@ -328,6 +328,7 @@ export default function ListingPage() {
           </section>
         )}
       </div>
+      <PromoteModal listing={listing} open={showPromote} onClose={() => setShowPromote(false)} />
       <Footer />
     </div>
   );
