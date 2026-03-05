@@ -44,16 +44,16 @@ export default function ListingCard({ listing, compact }: ListingCardProps) {
           {/* Badges */}
           <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
             {isVip && <span className="badge-vip flex items-center gap-1"><Crown className="w-3 h-3" />VIP</span>}
-            {listing.flags.urgent && <span className="badge-urgent">Срочно</span>}
+            {!isVip && listing.promotion_type === "top" && (
+              <span className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-[10px] font-bold uppercase">ТОП</span>
+            )}
+            {!isVip && listing.promotion_type === "urgent" && (
+              <span className="px-2 py-0.5 rounded-md bg-destructive text-destructive-foreground text-[10px] font-bold uppercase">Срочно</span>
+            )}
+            {listing.flags.urgent && !listing.promotion_type && <span className="badge-urgent">Срочно</span>}
             {listing.flags.bargain && <span className="badge-bargain">Торг</span>}
             {listing.flags.delivery && <span className="badge-delivery">Доставка</span>}
           </div>
-          {/* Promoted badge */}
-          {listing.promoted && !isVip && (
-            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-accent/90 text-accent-foreground text-[10px] font-bold uppercase">
-              ТОП
-            </div>
-          )}
         </div>
       </Link>
 

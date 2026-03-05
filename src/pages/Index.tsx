@@ -31,7 +31,7 @@ export default function Index() {
   );
 
   const popularListings = useMemo(
-    () => [...filteredListings].sort((a, b) => (b.views + b.favorites) - (a.views + a.favorites)).slice(0, 8),
+    () => [...filteredListings].sort((a, b) => (b.views + b.favorites + (b.contacts || 0)) - (a.views + a.favorites + (a.contacts || 0))).slice(0, 8),
     [filteredListings]
   );
 
