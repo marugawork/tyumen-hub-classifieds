@@ -6,10 +6,28 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 interface Props {
   listings: Listing[];
-  /** Insert ad banners every N cards (default 12) */
   adInterval?: number;
-  /** Insert promoted listing every N cards (default 8) */
   promotedInterval?: number;
+}
+
+/**
+ * Reorder listings so no more than 2 from the same author appear consecutively.
+ */
+function preventSellerSpam(items: Listing[]): Listing[] {
+  const result: Listing[] = [];
+  const deferred: Listing[] = [];
+
+  for (const item of items) {
+    const lastTwo = result.slice(-2);
+    const sameAuthorCount = lastTwo.filter(r => r.authorName === item.authorName).length;
+    if (sameAuthorCount >= 2) {
+      deferred.push(item);
+    } else {
+      result.push(item);
+    }
+  }
+  // Append deferred at end
+  return [...result, ...deferred];
 }
 
 export default function InfiniteListingGrid({
@@ -17,18 +35,16 @@ export default function InfiniteListingGrid({
   adInterval = 12,
   promotedInterval = 8,
 }: Props) {
-  // Separate promoted/vip from normal, avoiding duplicates
   const { promoted, normal } = useMemo(() => {
     const promotedSet = listings.filter(
       l => l.promotion_type === "vip" || l.promotion_type === "top" || l.promotion_type === "urgent"
     );
     const normalSet = listings.filter(
-      l => !l.promotion_type || l.promotion_type === null
+      l => !l.promotion_type || l.promotion_type === null || l.promotion_type === "raise"
     );
     return { promoted: promotedSet, normal: normalSet };
   }, [listings]);
 
-  // Merge: insert 1 promoted every promotedInterval normal cards
   const merged = useMemo(() => {
     const result: Listing[] = [];
     const usedIds = new Set<string>();
@@ -39,7 +55,6 @@ export default function InfiniteListingGrid({
       usedIds.add(normal[i].id);
       result.push(normal[i]);
 
-      // After every promotedInterval normal cards, insert a promoted one
       if ((i + 1) % promotedInterval === 0 && promoIdx < promoted.length) {
         while (promoIdx < promoted.length && usedIds.has(promoted[promoIdx].id)) {
           promoIdx++;
@@ -51,7 +66,15 @@ export default function InfiniteListingGrid({
         }
       }
     }
-    return result;
+    // Append remaining promoted
+    while (promoIdx < promoted.length) {
+      if (!usedIds.has(promoted[promoIdx].id)) {
+        usedIds.add(promoted[promoIdx].id);
+        result.push(promoted[promoIdx]);
+      }
+      promoIdx++;
+    }
+    return preventSellerSpam(result);
   }, [normal, promoted, promotedInterval]);
 
   const { visibleItems, hasMore, loaderRef } = useInfiniteScroll(merged);
@@ -62,7 +85,6 @@ export default function InfiniteListingGrid({
         {visibleItems.map((l, i) => (
           <div key={l.id} className="contents">
             <ListingCard listing={l} />
-            {/* Ad banner after every adInterval cards */}
             {(i + 1) % adInterval === 0 && i < visibleItems.length - 1 && (
               <div className="col-span-2 md:col-span-3 lg:col-span-4">
                 <AdBanner format="inline" />
