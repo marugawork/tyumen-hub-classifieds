@@ -349,10 +349,14 @@ export const listings: Listing[] = seeds.map((s, i) => {
     createdAt: randomDate(30),
     flags: flags(),
     vip: s.vip || false,
-    promoted: Math.random() < 0.1,
+    promoted: s.vip ? true : Math.random() < 0.1,
     boost_district: Math.random() < 0.08,
+    promotion_type: s.vip ? "vip" as PromotionType : (Math.random() < 0.08 ? "top" as PromotionType : (Math.random() < 0.05 ? "urgent" as PromotionType : null)),
+    promotion_until: new Date(Date.now() + 7 * 86400000).toISOString(),
+    promotion_district: Math.random() < 0.3 ? assignDistrict(i) : undefined,
     views: s.vip ? randomViews() + 300 : randomViews(),
     favorites: randomFavs(),
+    contacts: Math.floor(Math.random() * 30),
   };
 });
 
