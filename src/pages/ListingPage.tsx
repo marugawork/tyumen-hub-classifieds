@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import { Heart, Flag, MapPin, Eye, Clock, Crown, Share2, Copy, Calendar, RefreshCw } from "lucide-react";
+import { Heart, Flag, MapPin, Eye, Clock, Crown, Share2, Copy, Calendar, RefreshCw, Phone } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PromoteModal from "@/components/PromoteModal";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import ListingGallery from "@/components/ListingGallery";
 import SellerCard from "@/components/SellerCard";
@@ -33,6 +34,7 @@ export default function ListingPage() {
   const { setSelectedDistrict } = useDistrict();
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showPromote, setShowPromote] = useState(false);
 
   if (!listing) {
     return (
@@ -153,12 +155,13 @@ export default function ListingPage() {
                 <Flag className="w-4 h-4" />
                 Пожаловаться
               </button>
-              {!isVip && (
-                <Link to={`/promote/${listing.id}`} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-vip/10 text-vip border-2 border-vip/30 hover:bg-vip/20 transition-colors text-sm font-bold">
-                  <Crown className="w-4 h-4" />
-                  Продвинуть
-                </Link>
-              )}
+              <button
+                onClick={() => setShowPromote(true)}
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-vip/10 text-vip border-2 border-vip/30 hover:bg-vip/20 transition-colors text-sm font-bold"
+              >
+                <Crown className="w-4 h-4" />
+                ⭐ Продвинуть объявление
+              </button>
             </div>
 
             {/* Share panel */}
@@ -272,6 +275,11 @@ export default function ListingPage() {
                   В избранном
                 </div>
                 <span className="text-foreground font-medium">{listing.favorites}</span>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Phone className="w-4 h-4" />
+                  Контактов
+                </div>
+                <span className="text-foreground font-medium">{listing.contacts || 0}</span>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">ID: {listing.id}</div>
             </div>
@@ -320,6 +328,7 @@ export default function ListingPage() {
           </section>
         )}
       </div>
+      <PromoteModal listing={listing} open={showPromote} onClose={() => setShowPromote(false)} />
       <Footer />
     </div>
   );

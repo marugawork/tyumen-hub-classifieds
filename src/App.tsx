@@ -18,6 +18,7 @@ import PromotePage from "./pages/PromotePage";
 import BusinessProfilePage from "./pages/BusinessProfilePage";
 import AdminPage from "./pages/AdminPage";
 import DistrictPage from "./pages/DistrictPage";
+import MyListingsPage from "./pages/MyListingsPage";
 import NotFound from "./pages/NotFound";
 import { DistrictProvider } from "./contexts/DistrictContext";
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/payment" element={<PaymentPage />} />
             <Route path="/promote/:id" element={<PromotePage />} />
+            <Route path="/my-listings" element={<MyListingsPage />} />
             <Route path="/business-profile" element={<BusinessProfilePage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<NotFound />} />

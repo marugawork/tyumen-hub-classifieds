@@ -1,6 +1,6 @@
 import { districts } from "./districts";
 
-export type PromotionType = "vip" | "top" | "urgent" | null;
+export type PromotionType = "vip" | "top" | "urgent" | "raise" | null;
 
 export interface Listing {
   id: string;
@@ -31,8 +31,10 @@ export interface Listing {
   promoted?: boolean;
   boost_district?: boolean;
   promotion_type: PromotionType;
-  promotion_until?: string;
+  promotion_start?: string;
+  promotion_end?: string;
   promotion_district?: string;
+  auto_raise?: boolean;
   views: number;
   favorites: number;
   contacts?: number;
@@ -351,9 +353,11 @@ export const listings: Listing[] = seeds.map((s, i) => {
     vip: s.vip || false,
     promoted: s.vip ? true : Math.random() < 0.1,
     boost_district: Math.random() < 0.08,
-    promotion_type: s.vip ? "vip" as PromotionType : (Math.random() < 0.08 ? "top" as PromotionType : (Math.random() < 0.05 ? "urgent" as PromotionType : null)),
-    promotion_until: new Date(Date.now() + 7 * 86400000).toISOString(),
+    promotion_type: s.vip ? "vip" as PromotionType : (Math.random() < 0.08 ? "top" as PromotionType : (Math.random() < 0.06 ? "urgent" as PromotionType : (Math.random() < 0.05 ? "raise" as PromotionType : null))),
+    promotion_start: new Date(Date.now() - 3 * 86400000).toISOString(),
+    promotion_end: new Date(Date.now() + 7 * 86400000).toISOString(),
     promotion_district: Math.random() < 0.3 ? assignDistrict(i) : undefined,
+    auto_raise: s.vip ? true : Math.random() < 0.1,
     views: s.vip ? randomViews() + 300 : randomViews(),
     favorites: randomFavs(),
     contacts: Math.floor(Math.random() * 30),
