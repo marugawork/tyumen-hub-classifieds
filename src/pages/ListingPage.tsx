@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import { Heart, Flag, MapPin, Eye, Clock, Crown, Share2, Copy, Calendar, RefreshCw } from "lucide-react";
+import { Heart, Flag, MapPin, Eye, Clock, Crown, Share2, Copy, Calendar, RefreshCw, Phone } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PromoteModal from "@/components/PromoteModal";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import ListingGallery from "@/components/ListingGallery";
 import SellerCard from "@/components/SellerCard";
