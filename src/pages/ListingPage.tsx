@@ -155,12 +155,13 @@ export default function ListingPage() {
                 <Flag className="w-4 h-4" />
                 Пожаловаться
               </button>
-              {!isVip && (
-                <Link to={`/promote/${listing.id}`} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-vip/10 text-vip border-2 border-vip/30 hover:bg-vip/20 transition-colors text-sm font-bold">
-                  <Crown className="w-4 h-4" />
-                  Продвинуть
-                </Link>
-              )}
+              <button
+                onClick={() => setShowPromote(true)}
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-vip/10 text-vip border-2 border-vip/30 hover:bg-vip/20 transition-colors text-sm font-bold"
+              >
+                <Crown className="w-4 h-4" />
+                ⭐ Продвинуть объявление
+              </button>
             </div>
 
             {/* Share panel */}
