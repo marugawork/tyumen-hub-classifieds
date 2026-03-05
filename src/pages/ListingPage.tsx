@@ -34,6 +34,7 @@ export default function ListingPage() {
   const { setSelectedDistrict } = useDistrict();
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showPromote, setShowPromote] = useState(false);
 
   if (!listing) {
     return (
