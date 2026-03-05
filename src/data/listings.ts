@@ -1,6 +1,6 @@
 import { districts } from "./districts";
 
-export type PromotionType = "vip" | "top" | "urgent" | null;
+export type PromotionType = "vip" | "top" | "urgent" | "raise" | null;
 
 export interface Listing {
   id: string;
@@ -31,8 +31,10 @@ export interface Listing {
   promoted?: boolean;
   boost_district?: boolean;
   promotion_type: PromotionType;
-  promotion_until?: string;
+  promotion_start?: string;
+  promotion_end?: string;
   promotion_district?: string;
+  auto_raise?: boolean;
   views: number;
   favorites: number;
   contacts?: number;
