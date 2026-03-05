@@ -1,5 +1,7 @@
 import { districts } from "./districts";
 
+export type PromotionType = "vip" | "top" | "urgent" | null;
+
 export interface Listing {
   id: string;
   title: string;
@@ -28,8 +30,12 @@ export interface Listing {
   vip?: boolean;
   promoted?: boolean;
   boost_district?: boolean;
+  promotion_type: PromotionType;
+  promotion_until?: string;
+  promotion_district?: string;
   views: number;
   favorites: number;
+  contacts?: number;
 }
 
 const photoPlaceholders: Record<string, string[]> = {
