@@ -275,6 +275,11 @@ export default function ListingPage() {
                   В избранном
                 </div>
                 <span className="text-foreground font-medium">{listing.favorites}</span>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Phone className="w-4 h-4" />
+                  Контактов
+                </div>
+                <span className="text-foreground font-medium">{listing.contacts || 0}</span>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">ID: {listing.id}</div>
             </div>
