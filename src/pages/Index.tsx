@@ -46,6 +46,11 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {/* Horizontal ad */}
+      <div className="container-main pt-4">
+        <AdBanner format="horizontal" />
+      </div>
+
       {/* Search block */}
       <section className="py-4 md:py-6">
         <div className="container-main">
@@ -64,11 +69,6 @@ export default function Index() {
           )}
         </div>
       </section>
-
-      {/* Horizontal ad */}
-      <div className="container-main pt-4">
-        <AdBanner format="horizontal" />
-      </div>
 
       {/* Categories */}
       <section className="container-main py-12">
