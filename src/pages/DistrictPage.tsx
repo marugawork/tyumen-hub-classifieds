@@ -6,6 +6,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
+import AdBanner from "@/components/AdBanner";
 import { filterListings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
@@ -33,6 +34,9 @@ export default function DistrictPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <div className="container-main pt-4 mb-2">
+        <AdBanner format="horizontal" />
+      </div>
       <div className="container-main py-6">
         <div className="mb-6">
           <SearchBar compact />

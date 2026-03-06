@@ -6,6 +6,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
+import AdBanner from "@/components/AdBanner";
 import { filterListings } from "@/data/listings";
 import { useDistrict } from "@/contexts/DistrictContext";
 import { slugToDistrict } from "@/data/districts";
@@ -45,6 +46,9 @@ export default function SearchResults() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <div className="container-main pt-4 mb-2">
+        <AdBanner format="horizontal" />
+      </div>
       <div className="container-main py-6">
         <div className="mb-6">
           <SearchBar compact initialQuery={query} />

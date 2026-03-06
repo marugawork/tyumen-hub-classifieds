@@ -6,6 +6,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
+import AdBanner from "@/components/AdBanner";
 import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/categories";
 import { filterListings, listings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
@@ -51,12 +52,15 @@ export default function CategoryPage() {
   if (!category) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container-main py-6">
-          <div className="mb-6">
-            <SearchBar compact />
-          </div>
-          <BreadcrumbNav crumbs={[{ label: "Все категории" }]} />
+      <Header />
+      <div className="container-main pt-4 mb-2">
+        <AdBanner format="horizontal" />
+      </div>
+      <div className="container-main py-6">
+        <div className="mb-6">
+          <SearchBar compact />
+        </div>
+        <BreadcrumbNav crumbs={[{ label: "Все категории" }]} />
           <h1 className="text-2xl font-extrabold text-foreground mb-6">Все категории</h1>
           <div className="space-y-4">
             {categories.map(cat => {
@@ -107,6 +111,9 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <div className="container-main pt-4 mb-2">
+        <AdBanner format="horizontal" />
+      </div>
       <div className="container-main py-6">
         <div className="mb-6">
           <SearchBar compact />
