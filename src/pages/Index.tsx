@@ -71,7 +71,7 @@ export default function Index() {
       </section>
 
       {/* Categories */}
-      <section className="container-main py-12">
+      <section className="container-main pt-5 pb-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-extrabold text-foreground">Категории</h2>
           <Link to="/categories" className="text-sm text-accent font-semibold hover:text-accent/80 transition-colors flex items-center gap-1">
