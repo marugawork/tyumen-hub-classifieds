@@ -65,7 +65,23 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Mini banners row */}
+      {/* Horizontal ad */}
+      <div className="container-main pt-8">
+        <AdBanner format="horizontal" />
+      </div>
+
+      {/* Categories */}
+      <section className="container-main py-12">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-extrabold text-foreground">Категории</h2>
+          <Link to="/categories" className="text-sm text-accent font-semibold hover:text-accent/80 transition-colors flex items-center gap-1">
+            Все категории <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
+        <CategoryGrid />
+      </section>
+
+      {/* Mini banners row (geo ads) */}
       <section className="pb-8">
         <div className="container-main">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -87,22 +103,6 @@ export default function Index() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Top ad */}
-      <div className="container-main pt-8">
-        <AdBanner format="horizontal" />
-      </div>
-
-      {/* Categories */}
-      <section className="container-main py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-extrabold text-foreground">Категории</h2>
-          <Link to="/categories" className="text-sm text-accent font-semibold hover:text-accent/80 transition-colors flex items-center gap-1">
-            Все категории <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <CategoryGrid />
       </section>
 
       {/* VIP */}
