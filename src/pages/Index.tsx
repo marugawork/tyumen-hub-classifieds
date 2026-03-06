@@ -47,7 +47,7 @@ export default function Index() {
       <Header />
 
       {/* Search block */}
-      <section className="py-10 md:py-14">
+      <section className="py-4 md:py-6">
         <div className="container-main">
           <SearchBar />
           {selectedDistrict && (
@@ -66,7 +66,7 @@ export default function Index() {
       </section>
 
       {/* Horizontal ad */}
-      <div className="container-main pt-8">
+      <div className="container-main pt-4">
         <AdBanner format="horizontal" />
       </div>
 
