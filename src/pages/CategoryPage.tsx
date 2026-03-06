@@ -111,6 +111,9 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <div className="container-main pt-4 mb-2">
+        <AdBanner format="horizontal" />
+      </div>
       <div className="container-main py-6">
         <div className="mb-6">
           <SearchBar compact />
