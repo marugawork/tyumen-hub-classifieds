@@ -77,7 +77,7 @@ export default function InfiniteListingGrid({
     return preventSellerSpam(result);
   }, [normal, promoted, promotedInterval]);
 
-  const { visibleItems, hasMore, loaderRef } = useInfiniteScroll(merged);
+  const { visibleItems, hasMore, loaderRef, totalCount } = useInfiniteScroll(merged);
 
   return (
     <>
@@ -96,6 +96,11 @@ export default function InfiniteListingGrid({
       {hasMore && (
         <div ref={loaderRef} className="text-center py-8 text-sm text-muted-foreground">
           Загрузка…
+        </div>
+      )}
+      {!hasMore && totalCount > 0 && (
+        <div className="text-center py-8 text-sm text-muted-foreground">
+          Вы просмотрели все объявления
         </div>
       )}
     </>
