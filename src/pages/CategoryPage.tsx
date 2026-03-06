@@ -6,6 +6,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
+import AdBanner from "@/components/AdBanner";
 import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/categories";
 import { filterListings, listings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
