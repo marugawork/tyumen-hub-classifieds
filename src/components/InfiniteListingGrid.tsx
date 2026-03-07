@@ -97,7 +97,7 @@ export default function InfiniteListingGrid({
       </div>
       {hasMore && (
         <div ref={loaderRef} className="text-center py-8 text-sm text-muted-foreground">
-          {isLoadingMore ? "Загрузка…" : ""}
+          Загрузка…
         </div>
       )}
       {!hasMore && totalCount > 0 && (
