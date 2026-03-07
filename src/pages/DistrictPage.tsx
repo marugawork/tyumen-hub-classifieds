@@ -27,11 +27,11 @@ export default function DistrictPage() {
     [filters, districtName]
   );
 
+  const infiniteResetKey = useMemo(() => JSON.stringify({ districtName, ...filters }), [districtName, filters]);
+
   if (!districtName) return <NotFound />;
 
   const label = districtLabel || districtName;
-
-  const infiniteResetKey = useMemo(() => JSON.stringify({ districtName, ...filters }), [districtName, filters]);
 
   return (
     <div className="min-h-screen bg-background">
