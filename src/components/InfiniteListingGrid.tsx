@@ -35,6 +35,7 @@ export default function InfiniteListingGrid({
   listings,
   adInterval = 12,
   promotedInterval = 8,
+  resetKey,
 }: Props) {
   const { promoted, normal } = useMemo(() => {
     const promotedSet = listings.filter(
