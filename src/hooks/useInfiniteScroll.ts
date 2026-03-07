@@ -1,143 +1,155 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const PAGE_SIZE = 12;
+const DEFAULT_LIMIT = 20;
+
+type ItemWithId = { id: string };
 
 interface UseInfiniteScrollOptions {
   limit?: number;
   resetKey?: string;
 }
 
-function uniqueById<T extends { id: string }>(items: T[]): T[] {
+function uniqueById<T extends ItemWithId>(items: T[]): T[] {
   const seen = new Set<string>();
-  return items.filter(item => {
-    if (seen.has(item.id)) return false;
+  const result: T[] = [];
+
+  for (const item of items) {
+    if (seen.has(item.id)) continue;
     seen.add(item.id);
-    return true;
-  });
+    result.push(item);
+  }
+
+  return result;
 }
 
-export function useInfiniteScroll<T extends { id: string }>(
-  allItems: T[],
-  options: UseInfiniteScrollOptions = {}
-) {
-  const limit = options.limit ?? PAGE_SIZE;
-  const externalResetKey = options.resetKey ?? "";
-
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const isLoadingMoreRef = useRef(false);
+export function useInfiniteScroll<T extends ItemWithId>(allItems: T[], options: UseInfiniteScrollOptions = {}) {
+  const limit = options.limit ?? DEFAULT_LIMIT;
+  const resetKey = options.resetKey ?? "";
 
   const sourceItems = useMemo(() => uniqueById(allItems), [allItems]);
-  const sourceSignature = useMemo(() => sourceItems.map(item => item.id).join("|"), [sourceItems]);
-  const resetFingerprint = `${externalResetKey}:${sourceItems.length}:${sourceSignature}`;
 
   const [items, setItems] = useState<T[]>([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const logDebug = useCallback((event: string, payload: Record<string, unknown>) => {
-    if (import.meta.env.DEV) {
-      console.debug(`[infinite-scroll] ${event}`, payload);
-    }
-  }, []);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingLockRef = useRef(false);
 
-  const getPageItems = useCallback(
-    (nextPage: number) => {
-      const start = (nextPage - 1) * limit;
-      return sourceItems.slice(start, start + limit);
+  const getPageChunk = useCallback(
+    (pageNumber: number) => {
+      const from = (pageNumber - 1) * limit;
+      const to = from + limit;
+      return sourceItems.slice(from, to);
     },
-    [limit, sourceItems]
+    [sourceItems, limit]
   );
 
-  const reset = useCallback(
-    (reason = "manual") => {
-      setIsLoading(true);
-      setIsLoadingMore(false);
-      isLoadingMoreRef.current = false;
+  const applyFirstPage = useCallback(() => {
+    const firstChunk = uniqueById(getPageChunk(1));
+    const nextHasMore = firstChunk.length === limit && firstChunk.length < sourceItems.length;
 
-      const firstBatch = getPageItems(1);
-      const initialItems = uniqueById(firstBatch);
-      const nextHasMore = firstBatch.length >= limit && initialItems.length < sourceItems.length;
+    setItems(firstChunk);
+    setPage(1);
+    setHasMore(nextHasMore);
+    setIsLoading(false);
+    setIsLoadingMore(false);
+    loadingLockRef.current = false;
 
-      setItems(initialItems);
-      setPage(1);
-      setHasMore(nextHasMore);
-      setIsLoading(false);
-
-      logDebug("reset", {
-        reason,
+    if (import.meta.env.DEV) {
+      console.debug("[feed] reset", {
         page: 1,
-        totalSource: sourceItems.length,
-        loaded: firstBatch.length,
-        unique: initialItems.length,
+        source: sourceItems.length,
+        loaded: firstChunk.length,
         hasMore: nextHasMore,
       });
-    },
-    [getPageItems, limit, logDebug, sourceItems.length]
-  );
+    }
+  }, [getPageChunk, limit, sourceItems.length]);
+
+  const reset = useCallback(() => {
+    setIsLoading(true);
+    setItems([]);
+    setPage(1);
+    setHasMore(true);
+    setIsLoadingMore(false);
+    loadingLockRef.current = false;
+
+    applyFirstPage();
+  }, [applyFirstPage]);
 
   const loadMore = useCallback(() => {
-    if (!hasMore || isLoading || isLoadingMoreRef.current) return;
+    if (isLoading || isLoadingMore || loadingLockRef.current || !hasMore) return;
 
-    isLoadingMoreRef.current = true;
+    loadingLockRef.current = true;
     setIsLoadingMore(true);
 
     const nextPage = page + 1;
-    const nextBatch = getPageItems(nextPage);
-    const mergedItems = uniqueById([...items, ...nextBatch]);
-    const newUniqueCount = mergedItems.length - items.length;
+    const nextChunk = getPageChunk(nextPage);
+    const merged = uniqueById([...items, ...nextChunk]);
+    const newUniqueCount = merged.length - items.length;
 
-    const reachedEndBySize = nextBatch.length < limit;
-    const reachedEndByDedup = newUniqueCount === 0;
-    const reachedEndBySource = mergedItems.length >= sourceItems.length;
-    const nextHasMore = !reachedEndBySize && !reachedEndByDedup && !reachedEndBySource;
+    const isShortPage = nextChunk.length < limit;
+    const noUniqueItems = newUniqueCount === 0;
+    const reachedTotal = merged.length >= sourceItems.length;
+    const nextHasMore = !(isShortPage || noUniqueItems || reachedTotal);
 
-    setItems(mergedItems);
-    setPage(nextPage);
+    setItems(merged);
     setHasMore(nextHasMore);
-
-    logDebug("load_more", {
-      page: nextPage,
-      loaded: nextBatch.length,
-      newUnique: newUniqueCount,
-      uniqueTotal: mergedItems.length,
-      hasMore: nextHasMore,
-    });
-
+    setPage(nextPage);
     setIsLoadingMore(false);
-    isLoadingMoreRef.current = false;
-  }, [getPageItems, hasMore, isLoading, items, limit, logDebug, page, sourceItems.length]);
+    loadingLockRef.current = false;
+
+    if (import.meta.env.DEV) {
+      console.debug("[feed] loadMore", {
+        page: nextPage,
+        currentItems: items.length,
+        chunkSize: nextChunk.length,
+        newUniqueCount,
+        mergedUnique: merged.length,
+        hasMore: nextHasMore,
+      });
+    }
+  }, [getPageChunk, hasMore, isLoading, isLoadingMore, items, limit, page, sourceItems.length]);
 
   useEffect(() => {
-    reset("filters_or_source_changed");
-  }, [resetFingerprint, reset]);
+    reset();
+  }, [resetKey, sourceItems, reset]);
 
   useEffect(() => {
-    const el = loaderRef.current;
-    if (!el || !hasMore) return;
+    const sentinel = loaderRef.current;
+    if (!sentinel || !hasMore) return;
 
-    const observer = new IntersectionObserver(
+    observerRef.current?.disconnect();
+
+    observerRef.current = new IntersectionObserver(
       entries => {
-        if (!entries[0]?.isIntersecting) return;
-        if (isLoading || isLoadingMoreRef.current || !hasMore) return;
+        const first = entries[0];
+        if (!first?.isIntersecting) return;
+        if (isLoading || isLoadingMore || loadingLockRef.current || !hasMore) return;
         loadMore();
       },
-      { rootMargin: "200px" }
+      { rootMargin: "240px" }
     );
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasMore, isLoading, loadMore]);
+    observerRef.current.observe(sentinel);
+
+    return () => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+    };
+  }, [hasMore, isLoading, isLoadingMore, loadMore]);
 
   return {
     visibleItems: items,
-    hasMore,
-    loaderRef,
-    totalCount: sourceItems.length,
     page,
+    hasMore,
     isLoading,
     isLoadingMore,
+    totalCount: sourceItems.length,
+    loaderRef,
+    loadMore,
     reset,
   };
 }
