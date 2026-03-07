@@ -141,7 +141,7 @@ export default function CategoryPage() {
         )}
         <FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
         <div className="mt-4">
-          <InfiniteListingGrid listings={results} />
+          <InfiniteListingGrid listings={results} resetKey={infiniteResetKey} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
