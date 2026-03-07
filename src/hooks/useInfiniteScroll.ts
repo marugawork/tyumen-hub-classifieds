@@ -87,35 +87,31 @@ export function useInfiniteScroll<T extends ItemWithId>(allItems: T[], options: 
 
     const nextPage = page + 1;
     const nextChunk = getPageChunk(nextPage);
+    const merged = uniqueById([...items, ...nextChunk]);
+    const newUniqueCount = merged.length - items.length;
 
-    setItems(prevItems => {
-      const merged = uniqueById([...prevItems, ...nextChunk]);
-      const newUniqueCount = merged.length - prevItems.length;
+    const isShortPage = nextChunk.length < limit;
+    const noUniqueItems = newUniqueCount === 0;
+    const reachedTotal = merged.length >= sourceItems.length;
+    const nextHasMore = !(isShortPage || noUniqueItems || reachedTotal);
 
-      const isShortPage = nextChunk.length < limit;
-      const noUniqueItems = newUniqueCount === 0;
-      const reachedTotal = merged.length >= sourceItems.length;
-      const nextHasMore = !(isShortPage || noUniqueItems || reachedTotal);
+    setItems(merged);
+    setHasMore(nextHasMore);
+    setPage(nextPage);
+    setIsLoadingMore(false);
+    loadingLockRef.current = false;
 
-      setHasMore(nextHasMore);
-      setPage(nextPage);
-      setIsLoadingMore(false);
-      loadingLockRef.current = false;
-
-      if (import.meta.env.DEV) {
-        console.debug("[feed] loadMore", {
-          page: nextPage,
-          currentItems: prevItems.length,
-          chunkSize: nextChunk.length,
-          newUniqueCount,
-          mergedUnique: merged.length,
-          hasMore: nextHasMore,
-        });
-      }
-
-      return merged;
-    });
-  }, [getPageChunk, hasMore, isLoading, isLoadingMore, limit, page, sourceItems.length]);
+    if (import.meta.env.DEV) {
+      console.debug("[feed] loadMore", {
+        page: nextPage,
+        currentItems: items.length,
+        chunkSize: nextChunk.length,
+        newUniqueCount,
+        mergedUnique: merged.length,
+        hasMore: nextHasMore,
+      });
+    }
+  }, [getPageChunk, hasMore, isLoading, isLoadingMore, items, limit, page, sourceItems.length]);
 
   useEffect(() => {
     reset();
