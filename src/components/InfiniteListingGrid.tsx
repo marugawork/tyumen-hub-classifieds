@@ -79,7 +79,7 @@ export default function InfiniteListingGrid({
     return preventSellerSpam(result);
   }, [normal, promoted, promotedInterval]);
 
-  const { visibleItems, hasMore, loaderRef, totalCount, isLoadingMore } = useInfiniteScroll(merged, { resetKey });
+  const { visibleItems, hasMore, loaderRef, totalCount } = useInfiniteScroll(merged, { resetKey });
 
   return (
     <>
