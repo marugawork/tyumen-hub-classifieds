@@ -8,6 +8,7 @@ interface Props {
   listings: Listing[];
   adInterval?: number;
   promotedInterval?: number;
+  resetKey?: string;
 }
 
 /**
@@ -34,6 +35,7 @@ export default function InfiniteListingGrid({
   listings,
   adInterval = 12,
   promotedInterval = 8,
+  resetKey,
 }: Props) {
   const { promoted, normal } = useMemo(() => {
     const promotedSet = listings.filter(
@@ -77,7 +79,7 @@ export default function InfiniteListingGrid({
     return preventSellerSpam(result);
   }, [normal, promoted, promotedInterval]);
 
-  const { visibleItems, hasMore, loaderRef, totalCount } = useInfiniteScroll(merged);
+  const { visibleItems, hasMore, loaderRef, totalCount } = useInfiniteScroll(merged, { resetKey });
 
   return (
     <>

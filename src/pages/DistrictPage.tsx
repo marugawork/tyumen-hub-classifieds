@@ -27,6 +27,8 @@ export default function DistrictPage() {
     [filters, districtName]
   );
 
+  const infiniteResetKey = useMemo(() => JSON.stringify({ districtName, ...filters }), [districtName, filters]);
+
   if (!districtName) return <NotFound />;
 
   const label = districtLabel || districtName;
@@ -51,7 +53,7 @@ export default function DistrictPage() {
         <p className="text-sm text-muted-foreground mb-4">Найдено {results.length} объявлений</p>
         <FilterPanel filters={filters} onChange={setFilters} />
         <div className="mt-4">
-          <InfiniteListingGrid listings={results} />
+          <InfiniteListingGrid listings={results} resetKey={infiniteResetKey} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">

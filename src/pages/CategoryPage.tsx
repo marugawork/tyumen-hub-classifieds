@@ -49,6 +49,11 @@ export default function CategoryPage() {
     subcategoryId: subcategory?.id || filters.subcategoryId,
   }), [filters, category, subcategory]);
 
+  const infiniteResetKey = useMemo(
+    () => JSON.stringify({ categoryId: category?.id, subcategoryId: subcategory?.id || filters.subcategoryId, ...filters }),
+    [category?.id, subcategory?.id, filters]
+  );
+
   if (!category) {
     return (
       <div className="min-h-screen bg-background">
@@ -136,7 +141,7 @@ export default function CategoryPage() {
         )}
         <FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
         <div className="mt-4">
-          <InfiniteListingGrid listings={results} />
+          <InfiniteListingGrid listings={results} resetKey={infiniteResetKey} />
         </div>
         {results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">

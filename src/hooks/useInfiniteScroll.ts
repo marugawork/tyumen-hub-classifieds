@@ -2,52 +2,116 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 const PAGE_SIZE = 12;
 
-export function useInfiniteScroll<T extends { id: string }>(allItems: T[]) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+interface UseInfiniteScrollOptions {
+  limit?: number;
+  resetKey?: string;
+}
+
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter(item => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
+
+export function useInfiniteScroll<T extends { id: string }>(
+  allItems: T[],
+  options: UseInfiniteScrollOptions = {}
+) {
+  const limit = options.limit ?? PAGE_SIZE;
+  const externalResetKey = options.resetKey ?? "";
+
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const isLoadingRef = useRef(false);
+  const isLoadingMoreRef = useRef(false);
 
-  // Stable fingerprint: use sorted first few IDs + length
-  const itemsKey = useMemo(() => {
-    const ids = allItems.slice(0, 5).map(i => i.id).join(",");
-    return `${allItems.length}:${ids}`;
-  }, [allItems]);
+  const sourceItems = useMemo(() => uniqueById(allItems), [allItems]);
+  const sourceSignature = useMemo(() => sourceItems.map(item => item.id).join("|"), [sourceItems]);
+  const resetFingerprint = `${externalResetKey}:${sourceItems.length}:${sourceSignature}`;
 
-  const prevKeyRef = useRef(itemsKey);
+  const [items, setItems] = useState<T[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Reset when items change (district/filter/category switch)
-  useEffect(() => {
-    if (prevKeyRef.current !== itemsKey) {
-      setVisibleCount(PAGE_SIZE);
-      prevKeyRef.current = itemsKey;
+  const logDebug = useCallback((event: string, payload: Record<string, unknown>) => {
+    if (import.meta.env.DEV) {
+      console.debug(`[infinite-scroll] ${event}`, payload);
     }
-  }, [itemsKey]);
+  }, []);
 
-  // Deduplicate by id
-  const deduped = useMemo(() => {
-    const seen = new Set<string>();
-    return allItems.filter(item => {
-      if (seen.has(item.id)) return false;
-      seen.add(item.id);
-      return true;
-    });
-  }, [allItems]);
+  const getPageItems = useCallback(
+    (nextPage: number) => {
+      const start = (nextPage - 1) * limit;
+      return sourceItems.slice(start, start + limit);
+    },
+    [limit, sourceItems]
+  );
 
-  const visibleItems = deduped.slice(0, visibleCount);
-  const hasMore = visibleCount < deduped.length;
+  const reset = useCallback(
+    (reason = "manual") => {
+      setIsLoading(true);
+      setIsLoadingMore(false);
+      isLoadingMoreRef.current = false;
+
+      const firstBatch = getPageItems(1);
+      const initialItems = uniqueById(firstBatch);
+      const nextHasMore = firstBatch.length >= limit && initialItems.length < sourceItems.length;
+
+      setItems(initialItems);
+      setPage(1);
+      setHasMore(nextHasMore);
+      setIsLoading(false);
+
+      logDebug("reset", {
+        reason,
+        page: 1,
+        totalSource: sourceItems.length,
+        loaded: firstBatch.length,
+        unique: initialItems.length,
+        hasMore: nextHasMore,
+      });
+    },
+    [getPageItems, limit, logDebug, sourceItems.length]
+  );
 
   const loadMore = useCallback(() => {
-    if (isLoadingRef.current) return;
-    isLoadingRef.current = true;
-    setVisibleCount(prev => {
-      const next = Math.min(prev + PAGE_SIZE, deduped.length);
-      return next;
+    if (!hasMore || isLoading || isLoadingMoreRef.current) return;
+
+    isLoadingMoreRef.current = true;
+    setIsLoadingMore(true);
+
+    const nextPage = page + 1;
+    const nextBatch = getPageItems(nextPage);
+    const mergedItems = uniqueById([...items, ...nextBatch]);
+    const newUniqueCount = mergedItems.length - items.length;
+
+    const reachedEndBySize = nextBatch.length < limit;
+    const reachedEndByDedup = newUniqueCount === 0;
+    const reachedEndBySource = mergedItems.length >= sourceItems.length;
+    const nextHasMore = !reachedEndBySize && !reachedEndByDedup && !reachedEndBySource;
+
+    setItems(mergedItems);
+    setPage(nextPage);
+    setHasMore(nextHasMore);
+
+    logDebug("load_more", {
+      page: nextPage,
+      loaded: nextBatch.length,
+      newUnique: newUniqueCount,
+      uniqueTotal: mergedItems.length,
+      hasMore: nextHasMore,
     });
-    // Release lock after state update
-    requestAnimationFrame(() => {
-      isLoadingRef.current = false;
-    });
-  }, [deduped.length]);
+
+    setIsLoadingMore(false);
+    isLoadingMoreRef.current = false;
+  }, [getPageItems, hasMore, isLoading, items, limit, logDebug, page, sourceItems.length]);
+
+  useEffect(() => {
+    reset("filters_or_source_changed");
+  }, [resetFingerprint, reset]);
 
   useEffect(() => {
     const el = loaderRef.current;
@@ -55,19 +119,26 @@ export function useInfiniteScroll<T extends { id: string }>(allItems: T[]) {
 
     const observer = new IntersectionObserver(
       entries => {
-        if (entries[0].isIntersecting) loadMore();
+        if (!entries[0]?.isIntersecting) return;
+        if (isLoading || isLoadingMoreRef.current || !hasMore) return;
+        loadMore();
       },
       { rootMargin: "200px" }
     );
+
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasMore, loadMore]);
+  }, [hasMore, isLoading, loadMore]);
 
   return {
-    visibleItems,
+    visibleItems: items,
     hasMore,
     loaderRef,
-    totalCount: deduped.length,
-    reset: () => setVisibleCount(PAGE_SIZE),
+    totalCount: sourceItems.length,
+    page,
+    isLoading,
+    isLoadingMore,
+    reset,
   };
 }
+
