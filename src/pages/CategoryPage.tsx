@@ -49,6 +49,11 @@ export default function CategoryPage() {
     subcategoryId: subcategory?.id || filters.subcategoryId,
   }), [filters, category, subcategory]);
 
+  const infiniteResetKey = useMemo(
+    () => JSON.stringify({ categoryId: category?.id, subcategoryId: subcategory?.id || filters.subcategoryId, ...filters }),
+    [category?.id, subcategory?.id, filters]
+  );
+
   if (!category) {
     return (
       <div className="min-h-screen bg-background">
