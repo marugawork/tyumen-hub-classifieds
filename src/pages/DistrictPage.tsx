@@ -31,6 +31,8 @@ export default function DistrictPage() {
 
   const label = districtLabel || districtName;
 
+  const infiniteResetKey = useMemo(() => JSON.stringify({ districtName, ...filters }), [districtName, filters]);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

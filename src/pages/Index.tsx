@@ -41,6 +41,7 @@ export default function Index() {
   );
 
   const suffix = districtLabel ? ` — ${districtLabel}` : "";
+  const infiniteResetKey = selectedDistrict ? `district:${selectedDistrict}` : "district:all";
 
   return (
     <div className="min-h-screen bg-background">

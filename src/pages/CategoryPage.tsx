@@ -108,6 +108,11 @@ export default function CategoryPage() {
     crumbs.push({ label: category.name });
   }
 
+  const infiniteResetKey = useMemo(
+    () => JSON.stringify({ categoryId: category?.id, subcategoryId: subcategory?.id || filters.subcategoryId, ...filters }),
+    [category?.id, subcategory?.id, filters]
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

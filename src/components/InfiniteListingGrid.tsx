@@ -8,6 +8,7 @@ interface Props {
   listings: Listing[];
   adInterval?: number;
   promotedInterval?: number;
+  resetKey?: string;
 }
 
 /**

@@ -43,6 +43,8 @@ export default function SearchResults() {
 
   const crumbLabel = query ? `Поиск: «${query}»${suffix}` : `Все объявления${suffix}`;
 
+  const infiniteResetKey = useMemo(() => JSON.stringify({ query, ...filters }), [query, filters]);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
