@@ -43,6 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const isActive = (path: string) => {
     if (path === "/admin") return location.pathname === "/admin";
+    if (path === "/admin/growth") return location.pathname === "/admin/growth";
     return location.pathname.startsWith(path);
   };
 

@@ -36,6 +36,9 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminDistricts from "./pages/admin/AdminDistricts";
 import AdminTariffs from "./pages/admin/AdminTariffs";
 import AdminLogs from "./pages/admin/AdminLogs";
+import AdminGrowthDashboard from "./pages/admin/AdminGrowthDashboard";
+import AdminGrowthAnalytics from "./pages/admin/AdminGrowthAnalytics";
+import AdminGrowthRecommendations from "./pages/admin/AdminGrowthRecommendations";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +85,9 @@ const App = () => (
               <Route path="/admin/districts" element={<AdminGuard><AdminDistricts /></AdminGuard>} />
               <Route path="/admin/tariffs" element={<AdminGuard><AdminTariffs /></AdminGuard>} />
               <Route path="/admin/logs" element={<AdminGuard><AdminLogs /></AdminGuard>} />
+              <Route path="/admin/growth" element={<AdminGuard><AdminGrowthDashboard /></AdminGuard>} />
+              <Route path="/admin/growth/analytics" element={<AdminGuard><AdminGrowthAnalytics /></AdminGuard>} />
+              <Route path="/admin/growth/recommendations" element={<AdminGuard><AdminGrowthRecommendations /></AdminGuard>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
