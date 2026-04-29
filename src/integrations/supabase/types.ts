@@ -14,16 +14,355 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      growth_metrics: {
+        Row: {
+          active_listings: number
+          active_users: number
+          city: string
+          created_at: string
+          id: string
+          new_listings: number
+          new_users: number
+          revenue_kopecks: number
+          snapshot_date: string
+          top_purchases: number
+          total_contacts: number
+          total_listings: number
+          total_users: number
+          total_views: number
+          up_purchases: number
+          vip_purchases: number
+        }
+        Insert: {
+          active_listings?: number
+          active_users?: number
+          city?: string
+          created_at?: string
+          id?: string
+          new_listings?: number
+          new_users?: number
+          revenue_kopecks?: number
+          snapshot_date: string
+          top_purchases?: number
+          total_contacts?: number
+          total_listings?: number
+          total_users?: number
+          total_views?: number
+          up_purchases?: number
+          vip_purchases?: number
+        }
+        Update: {
+          active_listings?: number
+          active_users?: number
+          city?: string
+          created_at?: string
+          id?: string
+          new_listings?: number
+          new_users?: number
+          revenue_kopecks?: number
+          snapshot_date?: string
+          top_purchases?: number
+          total_contacts?: number
+          total_listings?: number
+          total_users?: number
+          total_views?: number
+          up_purchases?: number
+          vip_purchases?: number
+        }
+        Relationships: []
+      }
+      growth_recommendations: {
+        Row: {
+          action_data: Json | null
+          created_at: string
+          description: string
+          generated_at: string
+          id: string
+          is_applied: boolean
+          is_dismissed: boolean
+          priority: Database["public"]["Enums"]["recommendation_priority"]
+          title: string
+          type: Database["public"]["Enums"]["recommendation_type"]
+        }
+        Insert: {
+          action_data?: Json | null
+          created_at?: string
+          description: string
+          generated_at?: string
+          id?: string
+          is_applied?: boolean
+          is_dismissed?: boolean
+          priority?: Database["public"]["Enums"]["recommendation_priority"]
+          title: string
+          type: Database["public"]["Enums"]["recommendation_type"]
+        }
+        Update: {
+          action_data?: Json | null
+          created_at?: string
+          description?: string
+          generated_at?: string
+          id?: string
+          is_applied?: boolean
+          is_dismissed?: boolean
+          priority?: Database["public"]["Enums"]["recommendation_priority"]
+          title?: string
+          type?: Database["public"]["Enums"]["recommendation_type"]
+        }
+        Relationships: []
+      }
+      import_jobs: {
+        Row: {
+          category: string | null
+          city: string | null
+          created_at: string
+          created_by: string | null
+          error_log: Json | null
+          failed_rows: number
+          finished_at: string | null
+          id: string
+          payload: Json | null
+          processed_rows: number
+          source: Database["public"]["Enums"]["import_source"]
+          started_at: string | null
+          status: Database["public"]["Enums"]["import_job_status"]
+          total_rows: number
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_log?: Json | null
+          failed_rows?: number
+          finished_at?: string | null
+          id?: string
+          payload?: Json | null
+          processed_rows?: number
+          source: Database["public"]["Enums"]["import_source"]
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["import_job_status"]
+          total_rows?: number
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_log?: Json | null
+          failed_rows?: number
+          finished_at?: string | null
+          id?: string
+          payload?: Json | null
+          processed_rows?: number
+          source?: Database["public"]["Enums"]["import_source"]
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["import_job_status"]
+          total_rows?: number
+        }
+        Relationships: []
+      }
+      notifications_queue: {
+        Row: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          error: string | null
+          id: string
+          payload: Json
+          scheduled_at: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          subject: string | null
+          template: string
+          user_id: string | null
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          subject?: string | null
+          template: string
+          user_id?: string | null
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          subject?: string | null
+          template?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          referred_id: string | null
+          referrer_id: string
+          reward_type: string | null
+          rewarded_at: string | null
+          status: Database["public"]["Enums"]["referral_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_id?: string | null
+          referrer_id: string
+          reward_type?: string | null
+          rewarded_at?: string | null
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_id?: string | null
+          referrer_id?: string
+          reward_type?: string | null
+          rewarded_at?: string | null
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Relationships: []
+      }
+      seed_templates: {
+        Row: {
+          attributes: Json | null
+          category: string
+          created_at: string
+          description_pattern: string
+          id: string
+          is_active: boolean
+          price_max: number | null
+          price_min: number | null
+          title_pattern: string
+        }
+        Insert: {
+          attributes?: Json | null
+          category: string
+          created_at?: string
+          description_pattern: string
+          id?: string
+          is_active?: boolean
+          price_max?: number | null
+          price_min?: number | null
+          title_pattern: string
+        }
+        Update: {
+          attributes?: Json | null
+          category?: string
+          created_at?: string
+          description_pattern?: string
+          id?: string
+          is_active?: boolean
+          price_max?: number | null
+          price_min?: number | null
+          title_pattern?: string
+        }
+        Relationships: []
+      }
+      user_bonuses: {
+        Row: {
+          bonus_type: Database["public"]["Enums"]["bonus_type"]
+          created_at: string
+          expires_at: string | null
+          id: string
+          source: string | null
+          status: Database["public"]["Enums"]["bonus_status"]
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          bonus_type: Database["public"]["Enums"]["bonus_type"]
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["bonus_status"]
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          bonus_type?: Database["public"]["Enums"]["bonus_type"]
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["bonus_status"]
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "admin" | "moderator" | "user"
+      bonus_status: "available" | "used" | "expired"
+      bonus_type:
+        | "free_vip"
+        | "free_top"
+        | "free_up"
+        | "free_urgent"
+        | "signup_bonus"
+        | "referral_bonus"
+      import_job_status: "pending" | "processing" | "completed" | "failed"
+      import_source: "csv" | "api" | "manual" | "ai_generated"
+      notification_channel: "email" | "push" | "in_app"
+      notification_status: "pending" | "sent" | "failed" | "cancelled"
+      recommendation_priority: "low" | "medium" | "high" | "critical"
+      recommendation_type:
+        | "city_launch"
+        | "category_growth"
+        | "ad_placement"
+        | "pricing"
+        | "reactivation"
+        | "other"
+      referral_status: "pending" | "qualified" | "rewarded" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +489,31 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "admin", "moderator", "user"],
+      bonus_status: ["available", "used", "expired"],
+      bonus_type: [
+        "free_vip",
+        "free_top",
+        "free_up",
+        "free_urgent",
+        "signup_bonus",
+        "referral_bonus",
+      ],
+      import_job_status: ["pending", "processing", "completed", "failed"],
+      import_source: ["csv", "api", "manual", "ai_generated"],
+      notification_channel: ["email", "push", "in_app"],
+      notification_status: ["pending", "sent", "failed", "cancelled"],
+      recommendation_priority: ["low", "medium", "high", "critical"],
+      recommendation_type: [
+        "city_launch",
+        "category_growth",
+        "ad_placement",
+        "pricing",
+        "reactivation",
+        "other",
+      ],
+      referral_status: ["pending", "qualified", "rewarded", "expired"],
+    },
   },
 } as const
