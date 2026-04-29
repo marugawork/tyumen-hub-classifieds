@@ -5,12 +5,15 @@ import { adminNotifications } from "@/data/adminMockData";
 import {
   LayoutDashboard, FileText, ShieldCheck, Users, Building2, Megaphone,
   Code, TrendingUp, DollarSign, Grid3X3, MapPin, Settings, ScrollText,
-  LogOut, Bell, ChevronLeft, ChevronRight, Menu,
+  LogOut, Bell, ChevronLeft, ChevronRight, Menu, Zap, BarChart3, Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/admin/growth", icon: Zap, label: "Growth Engine", accent: true },
+  { path: "/admin/growth/analytics", icon: BarChart3, label: "Growth Analytics" },
+  { path: "/admin/growth/recommendations", icon: Sparkles, label: "AI-рекомендации" },
   { path: "/admin/listings", icon: FileText, label: "Объявления" },
   { path: "/admin/moderation", icon: ShieldCheck, label: "Модерация", badge: 8 },
   { path: "/admin/users", icon: Users, label: "Пользователи" },
