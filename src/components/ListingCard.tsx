@@ -114,3 +114,6 @@ function ListingCardImpl({ listing, compact }: ListingCardProps) {
     </div>
   );
 }
+
+const ListingCard = memo(ListingCardImpl);
+export default ListingCard;
