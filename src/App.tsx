@@ -44,6 +44,9 @@ const AdminLogs = lazy(() => import("./pages/admin/AdminLogs"));
 const AdminGrowthDashboard = lazy(() => import("./pages/admin/AdminGrowthDashboard"));
 const AdminGrowthAnalytics = lazy(() => import("./pages/admin/AdminGrowthAnalytics"));
 const AdminGrowthRecommendations = lazy(() => import("./pages/admin/AdminGrowthRecommendations"));
+const AdminGrowthSeed = lazy(() => import("./pages/admin/AdminGrowthSeed"));
+const AdminGrowthImport = lazy(() => import("./pages/admin/AdminGrowthImport"));
+const AdminGrowthEmptyCategories = lazy(() => import("./pages/admin/AdminGrowthEmptyCategories"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -109,7 +112,9 @@ const App = () => (
                 <Route path="/admin/growth" element={<AdminGuard><AdminGrowthDashboard /></AdminGuard>} />
                 <Route path="/admin/growth/analytics" element={<AdminGuard><AdminGrowthAnalytics /></AdminGuard>} />
                 <Route path="/admin/growth/recommendations" element={<AdminGuard><AdminGrowthRecommendations /></AdminGuard>} />
-
+                <Route path="/admin/growth/seed" element={<AdminGuard><AdminGrowthSeed /></AdminGuard>} />
+                <Route path="/admin/growth/import" element={<AdminGuard><AdminGrowthImport /></AdminGuard>} />
+                <Route path="/admin/growth/empty-categories" element={<AdminGuard><AdminGrowthEmptyCategories /></AdminGuard>} />}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
