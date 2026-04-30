@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, MapPin, Clock, Eye, Crown } from "lucide-react";
 import { type Listing } from "@/data/listings";
@@ -24,7 +25,7 @@ interface ListingCardProps {
   compact?: boolean;
 }
 
-export default function ListingCard({ listing, compact }: ListingCardProps) {
+function ListingCardImpl({ listing, compact }: ListingCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { setSelectedDistrict } = useDistrict();
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function ListingCard({ listing, compact }: ListingCardProps) {
             alt={listing.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
+            decoding="async"
           />
           {/* Badges */}
           <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
@@ -112,3 +114,6 @@ export default function ListingCard({ listing, compact }: ListingCardProps) {
     </div>
   );
 }
+
+const ListingCard = memo(ListingCardImpl);
+export default ListingCard;
