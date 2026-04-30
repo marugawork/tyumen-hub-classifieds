@@ -114,7 +114,7 @@ const App = () => (
                 <Route path="/admin/growth/recommendations" element={<AdminGuard><AdminGrowthRecommendations /></AdminGuard>} />
                 <Route path="/admin/growth/seed" element={<AdminGuard><AdminGrowthSeed /></AdminGuard>} />
                 <Route path="/admin/growth/import" element={<AdminGuard><AdminGrowthImport /></AdminGuard>} />
-                <Route path="/admin/growth/empty-categories" element={<AdminGuard><AdminGrowthEmptyCategories /></AdminGuard>} />}
+                <Route path="/admin/growth/empty-categories" element={<AdminGuard><AdminGrowthEmptyCategories /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
