@@ -6,6 +6,7 @@ import {
   LayoutDashboard, FileText, ShieldCheck, Users, Building2, Megaphone,
   Code, TrendingUp, DollarSign, Grid3X3, MapPin, Settings, ScrollText,
   LogOut, Bell, ChevronLeft, ChevronRight, Menu, Zap, BarChart3, Sparkles,
+  Upload, Search,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -14,6 +15,9 @@ const navItems = [
   { path: "/admin/growth", icon: Zap, label: "Growth Engine", accent: true },
   { path: "/admin/growth/analytics", icon: BarChart3, label: "Growth Analytics" },
   { path: "/admin/growth/recommendations", icon: Sparkles, label: "AI-рекомендации" },
+  { path: "/admin/growth/seed", icon: Sparkles, label: "AI Seed Generator" },
+  { path: "/admin/growth/import", icon: Upload, label: "CSV Import" },
+  { path: "/admin/growth/empty-categories", icon: Search, label: "Пустые категории" },
   { path: "/admin/listings", icon: FileText, label: "Объявления" },
   { path: "/admin/moderation", icon: ShieldCheck, label: "Модерация", badge: 8 },
   { path: "/admin/users", icon: Users, label: "Пользователи" },
