@@ -1,9 +1,25 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { growthDailySnapshots, growthSummary, aiRecommendations } from "@/data/growthMockData";
-import { TrendingUp, Users, FileText, DollarSign, Zap, Sparkles, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { TrendingUp, Users, FileText, DollarSign, Zap, Sparkles, ArrowUpRight, ArrowDownRight, Download } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { GROWTH_SCHEMA_DDL } from "@/lib/growthSchemaDDL";
+import { toast } from "@/hooks/use-toast";
+
+function exportSchemaSQL() {
+  const blob = new Blob([GROWTH_SCHEMA_DDL], { type: "text/sql;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const date = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `growth-engine-schema-${date}.sql`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast({ title: "Схема экспортирована", description: "Откройте файл в Supabase SQL Editor и выполните как одну транзакцию." });
+}
 
 function MetricCard({ label, value, delta, icon: Icon, suffix }: { label: string; value: string | number; delta: number; icon: any; suffix?: string }) {
   const positive = delta >= 0;
@@ -37,9 +53,18 @@ export default function AdminGrowthDashboard() {
             </div>
             <p className="text-sm text-muted-foreground mt-1">Автоматический рост платформы — метрики и AI-рекомендации</p>
           </div>
-          <Link to="/admin/growth/recommendations" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90">
-            <Sparkles className="w-4 h-4" /> AI-советы
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={exportSchemaSQL}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-muted text-foreground text-sm font-semibold hover:bg-muted/70 border border-border"
+              title="Скачать DDL для применения в своём Supabase проекте"
+            >
+              <Download className="w-4 h-4" /> Экспорт схемы SQL
+            </button>
+            <Link to="/admin/growth/recommendations" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90">
+              <Sparkles className="w-4 h-4" /> AI-советы
+            </Link>
+          </div>
         </div>
 
         {/* KPI cards */}
