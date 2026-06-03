@@ -136,12 +136,4 @@ const App = () => (
 );
 
 export default App;
-            </Suspense>
-          </BrowserRouter>
-        </AdminAuthProvider>
-      </DistrictProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
 
-export default App;
