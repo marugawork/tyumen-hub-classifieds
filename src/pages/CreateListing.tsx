@@ -13,6 +13,9 @@ import { toast } from "@/hooks/use-toast";
 export default function CreateListing() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [aiSeed, setAiSeed] = useState("");
+  const [aiBusy, setAiBusy] = useState<"gen" | "price" | null>(null);
+  const [priceHint, setPriceHint] = useState<{ recommended: number; min: number; max: number; demand: string } | null>(null);
   const [form, setForm] = useState({
     categoryId: "", subcategoryId: "", title: "", description: "", price: "",
     condition: "used" as "new" | "used", photos: [] as string[], district: "",
@@ -22,6 +25,58 @@ export default function CreateListing() {
 
   const selectedCat = categories.find(c => c.id === form.categoryId);
   const updateForm = (partial: Partial<typeof form>) => setForm(prev => ({ ...prev, ...partial }));
+
+  const runAIGenerate = async () => {
+    if (!aiSeed.trim()) {
+      toast({ title: "Введите 2-3 ключевых слова", variant: "destructive" });
+      return;
+    }
+    setAiBusy("gen");
+    try {
+      const { data, error } = await supabase.functions.invoke("listing-generator", {
+        body: { seed: aiSeed, city: "Нефтеюганск", available_categories: categories.map(c => c.name) },
+      });
+      if (error) throw error;
+      if (data?.title) {
+        const matchedCat = categories.find(c => c.name.toLowerCase() === String(data.category ?? "").toLowerCase());
+        updateForm({
+          title: data.title,
+          description: data.description ?? "",
+          ...(matchedCat ? { categoryId: matchedCat.id } : {}),
+        });
+        toast({ title: "Готово", description: "AI заполнил поля — проверьте и отредактируйте" });
+      }
+    } catch (e) {
+      toast({ title: "AI недоступен", description: e instanceof Error ? e.message : "", variant: "destructive" });
+    } finally {
+      setAiBusy(null);
+    }
+  };
+
+  const runPriceAdvisor = async () => {
+    if (!form.title) {
+      toast({ title: "Сначала заполните заголовок", variant: "destructive" });
+      return;
+    }
+    setAiBusy("price");
+    try {
+      const { data, error } = await supabase.functions.invoke("price-advisor", {
+        body: {
+          title: form.title,
+          description: form.description,
+          category: selectedCat?.name,
+          condition: form.condition,
+          city: "Нефтеюганск",
+        },
+      });
+      if (error) throw error;
+      if (data?.recommended) setPriceHint(data);
+    } catch (e) {
+      toast({ title: "AI недоступен", description: e instanceof Error ? e.message : "", variant: "destructive" });
+    } finally {
+      setAiBusy(null);
+    }
+  };
 
   const canProceed = () => {
     if (step === 1) return !!form.categoryId;
