@@ -141,6 +141,23 @@ export default function CreateListing() {
 
         {step === 2 && (
           <div className="space-y-5 animate-fade-in">
+            {/* AI Generator */}
+            <div className="bg-card border border-border rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-accent" />
+                <span className="text-sm font-bold text-foreground">AI-помощник</span>
+              </div>
+              <div className="flex gap-2">
+                <input type="text" value={aiSeed} onChange={e => setAiSeed(e.target.value)}
+                  placeholder="Например: диван бежевый, угловой"
+                  className="flex-1 h-10 px-3 rounded-lg border border-input bg-background text-sm" />
+                <Button onClick={runAIGenerate} disabled={aiBusy === "gen"} className="rounded-lg bg-accent text-accent-foreground">
+                  {aiBusy === "gen" ? <Loader2 className="w-4 h-4 animate-spin" /> : "Сгенерировать"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">AI заполнит заголовок, описание и подберёт категорию</p>
+            </div>
+
             <div>
               <label className="text-sm font-bold text-foreground">Заголовок *</label>
               <input type="text" maxLength={100} value={form.title} onChange={e => updateForm({ title: e.target.value })}
@@ -156,9 +173,23 @@ export default function CreateListing() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-bold text-foreground">Цена, ₽</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-foreground">Цена, ₽</label>
+                  <button type="button" onClick={runPriceAdvisor} disabled={aiBusy === "price"}
+                    className="text-xs text-accent font-semibold flex items-center gap-1 disabled:opacity-50">
+                    {aiBusy === "price" ? <Loader2 className="w-3 h-3 animate-spin" /> : <TrendingUp className="w-3 h-3" />}
+                    AI-оценка
+                  </button>
+                </div>
                 <input type="number" value={form.price} onChange={e => updateForm({ price: e.target.value })}
                   className="mt-1 w-full h-11 px-4 rounded-xl border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/20" />
+                {priceHint && (
+                  <div className="mt-2 text-xs space-y-0.5 text-muted-foreground">
+                    <div>Рекомендуем: <span className="font-bold text-foreground">{priceHint.recommended.toLocaleString("ru-RU")} ₽</span></div>
+                    <div>Диапазон: {priceHint.min.toLocaleString("ru-RU")}–{priceHint.max.toLocaleString("ru-RU")} ₽</div>
+                    <div>Спрос: {priceHint.demand === "high" ? "высокий" : priceHint.demand === "medium" ? "средний" : "низкий"}</div>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="text-sm font-bold text-foreground">Состояние</label>
