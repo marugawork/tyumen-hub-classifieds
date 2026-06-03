@@ -122,8 +122,20 @@ const App = () => (
                 <Route path="/admin/growth/empty-categories" element={<AdminGuard><AdminGrowthEmptyCategories /></AdminGuard>} />
                 <Route path="/admin/growth/promotion-advisor" element={<AdminGuard><AdminGrowthPromotionAdvisor /></AdminGuard>} />
                 <Route path="/admin/growth/trends" element={<AdminGuard><AdminGrowthTrends /></AdminGuard>} />
+                <Route path="/admin/growth-center" element={<AdminGuard><AdminGrowthCenter /></AdminGuard>} />
+                <Route path="/admin/ai-moderation" element={<AdminGuard><AdminAIModeration /></AdminGuard>} />
+                <Route path="/admin/anti-fraud" element={<AdminGuard><AdminAntiFraud /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </AdminAuthProvider>
+      </DistrictProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;
             </Suspense>
           </BrowserRouter>
         </AdminAuthProvider>
