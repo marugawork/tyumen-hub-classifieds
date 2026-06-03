@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Upload, Check } from "lucide-react";
+import { ChevronRight, Upload, Check, Sparkles, TrendingUp, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { categories } from "@/data/categories";
 import { districts } from "@/data/districts";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export default function CreateListing() {
   const navigate = useNavigate();
