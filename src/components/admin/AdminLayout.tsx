@@ -12,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/admin/growth", icon: Zap, label: "Growth Engine", accent: true },
+  { path: "/admin/growth-center", icon: Zap, label: "Growth Center", accent: true },
+  { path: "/admin/growth", icon: Zap, label: "Growth Engine" },
   { path: "/admin/growth/analytics", icon: BarChart3, label: "Growth Analytics" },
   { path: "/admin/growth/recommendations", icon: Sparkles, label: "AI-рекомендации" },
   { path: "/admin/growth/seed", icon: Sparkles, label: "AI Seed Generator" },
@@ -20,6 +21,8 @@ const navItems = [
   { path: "/admin/growth/empty-categories", icon: Search, label: "Пустые категории" },
   { path: "/admin/growth/promotion-advisor", icon: Target, label: "Promotion Advisor" },
   { path: "/admin/growth/trends", icon: LineChart, label: "Trend Analyzer" },
+  { path: "/admin/ai-moderation", icon: ShieldCheck, label: "AI Moderation", accent: true },
+  { path: "/admin/anti-fraud", icon: ShieldCheck, label: "Anti-Fraud" },
   { path: "/admin/listings", icon: FileText, label: "Объявления" },
   { path: "/admin/moderation", icon: ShieldCheck, label: "Модерация", badge: 8 },
   { path: "/admin/users", icon: Users, label: "Пользователи" },
