@@ -49,6 +49,9 @@ const AdminGrowthImport = lazy(() => import("./pages/admin/AdminGrowthImport"));
 const AdminGrowthEmptyCategories = lazy(() => import("./pages/admin/AdminGrowthEmptyCategories"));
 const AdminGrowthPromotionAdvisor = lazy(() => import("./pages/admin/AdminGrowthPromotionAdvisor"));
 const AdminGrowthTrends = lazy(() => import("./pages/admin/AdminGrowthTrends"));
+const AdminGrowthCenter = lazy(() => import("./pages/admin/AdminGrowthCenter"));
+const AdminAIModeration = lazy(() => import("./pages/admin/AdminAIModeration"));
+const AdminAntiFraud = lazy(() => import("./pages/admin/AdminAntiFraud"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
