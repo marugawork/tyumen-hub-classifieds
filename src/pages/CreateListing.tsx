@@ -310,7 +310,10 @@ export default function CreateListing() {
           {step < 3 ? (
             <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-accent text-accent-foreground rounded-xl">Далее</Button>
           ) : (
-            <Button onClick={() => navigate("/profile?created=true")} disabled={!canProceed()} className="bg-accent text-accent-foreground rounded-xl">Опубликовать</Button>
+            <Button onClick={publish} disabled={!canProceed() || publishing} className="bg-accent text-accent-foreground rounded-xl">
+              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Опубликовать"}
+            </Button>
+
           )}
         </div>
       </div>
