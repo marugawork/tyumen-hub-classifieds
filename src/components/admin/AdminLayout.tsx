@@ -23,6 +23,8 @@ const navItems = [
   { path: "/admin/growth/trends", icon: LineChart, label: "Trend Analyzer" },
   { path: "/admin/ai-moderation", icon: ShieldCheck, label: "AI Moderation", accent: true },
   { path: "/admin/anti-fraud", icon: ShieldCheck, label: "Anti-Fraud" },
+  { path: "/admin/moderation-queue", icon: ShieldCheck, label: "Очередь модерации" },
+
   { path: "/admin/listings", icon: FileText, label: "Объявления" },
   { path: "/admin/moderation", icon: ShieldCheck, label: "Модерация", badge: 8 },
   { path: "/admin/users", icon: Users, label: "Пользователи" },
