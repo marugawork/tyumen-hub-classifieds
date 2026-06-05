@@ -52,6 +52,8 @@ const AdminGrowthTrends = lazy(() => import("./pages/admin/AdminGrowthTrends"));
 const AdminGrowthCenter = lazy(() => import("./pages/admin/AdminGrowthCenter"));
 const AdminAIModeration = lazy(() => import("./pages/admin/AdminAIModeration"));
 const AdminAntiFraud = lazy(() => import("./pages/admin/AdminAntiFraud"));
+const AdminModerationQueue = lazy(() => import("./pages/admin/AdminModerationQueue"));
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -125,6 +127,8 @@ const App = () => (
                 <Route path="/admin/growth-center" element={<AdminGuard><AdminGrowthCenter /></AdminGuard>} />
                 <Route path="/admin/ai-moderation" element={<AdminGuard><AdminAIModeration /></AdminGuard>} />
                 <Route path="/admin/anti-fraud" element={<AdminGuard><AdminAntiFraud /></AdminGuard>} />
+                <Route path="/admin/moderation-queue" element={<AdminGuard><AdminModerationQueue /></AdminGuard>} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

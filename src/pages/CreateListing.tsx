@@ -13,6 +13,8 @@ import { toast } from "@/hooks/use-toast";
 export default function CreateListing() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [publishing, setPublishing] = useState(false);
+
   const [aiSeed, setAiSeed] = useState("");
   const [aiBusy, setAiBusy] = useState<"gen" | "price" | null>(null);
   const [priceHint, setPriceHint] = useState<{ recommended: number; min: number; max: number; demand: string } | null>(null);
@@ -83,6 +85,57 @@ export default function CreateListing() {
     if (step === 2) return form.title.length >= 5 && form.description.length >= 10;
     return form.contactName && form.contactPhone && form.district;
   };
+
+  const publish = async () => {
+    setPublishing(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const payload = {
+        author_id: user?.id ?? null,
+        author_name: form.contactName,
+        author_type: "private",
+        title: form.title,
+        description: form.description,
+        price: Number(form.price) || 0,
+        category_id: form.categoryId,
+        district: form.district,
+        phone: form.contactPhone,
+        photos: form.photos,
+        urgent: !!form.flags.urgent,
+        status: "pending",
+      };
+      const { data: inserted, error } = await supabase
+        .from("listings")
+        .insert(payload)
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      // Enqueue for AI moderation (best-effort; non-blocking on failure)
+      try {
+        const { data: mod } = await supabase.functions.invoke("ai-moderation", {
+          body: { title: form.title, description: form.description, price: payload.price, category: selectedCat?.name },
+        });
+        await supabase.from("moderation_queue").insert({
+          listing_id: inserted.id,
+          status: "pending",
+          ai_score: mod?.moderation_score ?? null,
+          ai_risk: mod?.risk_level ?? null,
+          ai_reasons: mod?.reasons ?? [],
+        });
+      } catch {
+        await supabase.from("moderation_queue").insert({ listing_id: inserted.id, status: "pending" });
+      }
+
+      toast({ title: "Опубликовано", description: "Объявление отправлено на модерацию" });
+      navigate("/profile?created=true");
+    } catch (e) {
+      toast({ title: "Не удалось опубликовать", description: e instanceof Error ? e.message : "", variant: "destructive" });
+    } finally {
+      setPublishing(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -257,7 +310,10 @@ export default function CreateListing() {
           {step < 3 ? (
             <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-accent text-accent-foreground rounded-xl">Далее</Button>
           ) : (
-            <Button onClick={() => navigate("/profile?created=true")} disabled={!canProceed()} className="bg-accent text-accent-foreground rounded-xl">Опубликовать</Button>
+            <Button onClick={publish} disabled={!canProceed() || publishing} className="bg-accent text-accent-foreground rounded-xl">
+              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Опубликовать"}
+            </Button>
+
           )}
         </div>
       </div>
