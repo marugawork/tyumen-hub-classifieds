@@ -35,15 +35,19 @@ function dbToListing(r: DbListing): Listing {
     title: r.title,
     description: r.description,
     price: Number(r.price) || 0,
+    currency: r.currency || "RUB",
     categoryId: r.category_id,
     subcategoryId: "",
     district: r.district || "",
+    address: "",
     photos: r.photos?.length ? r.photos : ["/placeholder.svg"],
     authorName: r.author_name || "Продавец",
     authorType: (r.author_type === "business" ? "business" : "private") as Listing["authorType"],
+    authorPhone: r.phone || "",
     authorRating: 5,
     createdAt: r.created_at,
     views: r.views ?? 0,
+    favorites: 0,
     vip: !!r.vip,
     promoted: r.promotion_type === "top" || r.promotion_type === "up",
     promotion_type: (r.promotion_type as Listing["promotion_type"]) ?? null,
@@ -54,6 +58,7 @@ function dbToListing(r: DbListing): Listing {
     },
     condition: "used",
   };
+
 }
 
 export interface FetchListingsParams {
