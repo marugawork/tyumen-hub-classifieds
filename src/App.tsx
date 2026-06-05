@@ -52,6 +52,8 @@ const AdminGrowthTrends = lazy(() => import("./pages/admin/AdminGrowthTrends"));
 const AdminGrowthCenter = lazy(() => import("./pages/admin/AdminGrowthCenter"));
 const AdminAIModeration = lazy(() => import("./pages/admin/AdminAIModeration"));
 const AdminAntiFraud = lazy(() => import("./pages/admin/AdminAntiFraud"));
+const AdminModerationQueue = lazy(() => import("./pages/admin/AdminModerationQueue"));
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
