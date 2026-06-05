@@ -13,6 +13,8 @@ import { toast } from "@/hooks/use-toast";
 export default function CreateListing() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [publishing, setPublishing] = useState(false);
+
   const [aiSeed, setAiSeed] = useState("");
   const [aiBusy, setAiBusy] = useState<"gen" | "price" | null>(null);
   const [priceHint, setPriceHint] = useState<{ recommended: number; min: number; max: number; demand: string } | null>(null);
