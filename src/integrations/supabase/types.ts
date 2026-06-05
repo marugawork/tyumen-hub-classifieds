@@ -14,6 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_profiles: {
+        Row: {
+          city: string
+          created_at: string
+          deals_count: number
+          description: string
+          district: string | null
+          founded_year: number | null
+          id: string
+          logo_url: string | null
+          name: string
+          rating: number
+          updated_at: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          deals_count?: number
+          description?: string
+          district?: string | null
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          rating?: number
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          deals_count?: number
+          description?: string
+          district?: string | null
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      fraud_flags: {
+        Row: {
+          created_at: string
+          flag_group: string
+          fraud_score: number
+          id: string
+          listing_id: string
+          reasons: string[]
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          flag_group?: string
+          fraud_score?: number
+          id?: string
+          listing_id: string
+          reasons?: string[]
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          flag_group?: string
+          fraud_score?: number
+          id?: string
+          listing_id?: string
+          reasons?: string[]
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_flags_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       growth_metrics: {
         Row: {
           active_listings: number
@@ -160,6 +255,137 @@ export type Database = {
           total_rows?: number
         }
         Relationships: []
+      }
+      listings: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          author_type: string
+          category_id: string
+          city: string
+          created_at: string
+          currency: string
+          description: string
+          district: string | null
+          id: string
+          moderation_score: number | null
+          phone: string | null
+          photos: string[]
+          pinned: boolean
+          price: number
+          promotion_expires_at: string | null
+          promotion_type: string | null
+          risk_level: string | null
+          status: string
+          title: string
+          updated_at: string
+          urgent: boolean
+          views: number
+          vip: boolean
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          author_type?: string
+          category_id: string
+          city?: string
+          created_at?: string
+          currency?: string
+          description?: string
+          district?: string | null
+          id?: string
+          moderation_score?: number | null
+          phone?: string | null
+          photos?: string[]
+          pinned?: boolean
+          price?: number
+          promotion_expires_at?: string | null
+          promotion_type?: string | null
+          risk_level?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          urgent?: boolean
+          views?: number
+          vip?: boolean
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          author_type?: string
+          category_id?: string
+          city?: string
+          created_at?: string
+          currency?: string
+          description?: string
+          district?: string | null
+          id?: string
+          moderation_score?: number | null
+          phone?: string | null
+          photos?: string[]
+          pinned?: boolean
+          price?: number
+          promotion_expires_at?: string | null
+          promotion_type?: string | null
+          risk_level?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          urgent?: boolean
+          views?: number
+          vip?: boolean
+        }
+        Relationships: []
+      }
+      moderation_queue: {
+        Row: {
+          ai_reasons: string[]
+          ai_risk: string | null
+          ai_score: number | null
+          created_at: string
+          id: string
+          listing_id: string
+          notes: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ai_reasons?: string[]
+          ai_risk?: string | null
+          ai_score?: number | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_reasons?: string[]
+          ai_risk?: string | null
+          ai_score?: number | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_queue_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications_queue: {
         Row: {
