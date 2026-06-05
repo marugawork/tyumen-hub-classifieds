@@ -127,6 +127,8 @@ const App = () => (
                 <Route path="/admin/growth-center" element={<AdminGuard><AdminGrowthCenter /></AdminGuard>} />
                 <Route path="/admin/ai-moderation" element={<AdminGuard><AdminAIModeration /></AdminGuard>} />
                 <Route path="/admin/anti-fraud" element={<AdminGuard><AdminAntiFraud /></AdminGuard>} />
+                <Route path="/admin/moderation-queue" element={<AdminGuard><AdminModerationQueue /></AdminGuard>} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
