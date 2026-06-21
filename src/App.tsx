@@ -7,7 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { DistrictProvider } from "./contexts/DistrictContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import AdminGuard from "./components/admin/AdminGuard";
+const AuthPage = lazy(() => import("./pages/AuthPage"));
 
 // Lazy-load all secondary public pages — keep Index eager for fastest LCP
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
@@ -76,6 +78,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <DistrictProvider>
+        <AuthProvider>
         <AdminAuthProvider>
           <Toaster />
           <Sonner />
@@ -91,6 +94,7 @@ const App = () => (
                 <Route path="/district/:slug" element={<DistrictPage />} />
                 <Route path="/listing/:id" element={<ListingPage />} />
                 <Route path="/create" element={<CreateListing />} />
+                <Route path="/auth" element={<AuthPage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
                 <Route path="/help" element={<HelpPage />} />
                 <Route path="/messages" element={<MessagesPage />} />
@@ -134,6 +138,7 @@ const App = () => (
             </Suspense>
           </BrowserRouter>
         </AdminAuthProvider>
+        </AuthProvider>
       </DistrictProvider>
     </TooltipProvider>
   </QueryClientProvider>
