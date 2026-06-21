@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { TrendingUp, Shield, ChevronRight, Crown, MapPin } from "lucide-react";
 import { useDistrict } from "@/contexts/DistrictContext";
 import Header from "@/components/Header";
@@ -9,21 +10,18 @@ import ListingCard from "@/components/ListingCard";
 import AdBanner from "@/components/AdBanner";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
-import { type Listing } from "@/data/listings";
 import { fetchListings } from "@/lib/dbListings";
 import { districtToSlug } from "@/data/districts";
 
 export default function Index() {
   const { selectedDistrict, districtLabel } = useDistrict();
-  const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetchListings({ district: selectedDistrict || undefined, limit: 200 }).then(rows => {
-      if (!cancelled) setFilteredListings(rows);
-    });
-    return () => { cancelled = true; };
-  }, [selectedDistrict]);
+  const { data: filteredListings = [] } = useQuery({
+    queryKey: ["listings", "feed", selectedDistrict || "all"],
+    queryFn: () => fetchListings({ district: selectedDistrict || undefined, limit: 200 }),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
 
   const vipListings = useMemo(
     () => filteredListings.filter(l => l.vip).slice(0, 4),
