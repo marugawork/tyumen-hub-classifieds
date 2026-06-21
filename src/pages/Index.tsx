@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { TrendingUp, Shield, ChevronRight, Crown, MapPin } from "lucide-react";
 import { useDistrict } from "@/contexts/DistrictContext";
@@ -9,16 +9,21 @@ import ListingCard from "@/components/ListingCard";
 import AdBanner from "@/components/AdBanner";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
-import { listings, filterListings } from "@/data/listings";
+import { type Listing } from "@/data/listings";
+import { fetchListings } from "@/lib/dbListings";
 import { districtToSlug } from "@/data/districts";
 
 export default function Index() {
   const { selectedDistrict, districtLabel } = useDistrict();
+  const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
 
-  const filteredListings = useMemo(
-    () => selectedDistrict ? filterListings({ district: selectedDistrict, sortBy: "date" }) : listings,
-    [selectedDistrict]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    fetchListings({ district: selectedDistrict || undefined, limit: 200 }).then(rows => {
+      if (!cancelled) setFilteredListings(rows);
+    });
+    return () => { cancelled = true; };
+  }, [selectedDistrict]);
 
   const vipListings = useMemo(
     () => filteredListings.filter(l => l.vip).slice(0, 4),
