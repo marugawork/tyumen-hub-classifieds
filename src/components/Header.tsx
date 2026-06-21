@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, User, Plus, Menu, X, Crown } from "lucide-react";
+import { Heart, MessageCircle, User, Plus, Menu, X, Crown, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/hooks/useFavorites";
 import { listings } from "@/data/listings";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { count: favCount } = useFavorites();
+  const { user, signOut } = useAuth();
 
   const totalListings = listings.length;
   const todayListings = listings.filter(l => {
@@ -68,12 +70,31 @@ export default function Header() {
             >
               <MessageCircle className="w-5 h-5" />
             </Link>
-            <Link
-              to="/profile"
-              className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden sm:flex"
-            >
-              <User className="w-5 h-5" />
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden sm:flex"
+                  title={user.email ?? "Профиль"}
+                >
+                  <User className="w-5 h-5" />
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden sm:flex"
+                  title="Выйти"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/auth"
+                className="px-3 py-2 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors hidden sm:flex"
+              >
+                Войти
+              </Link>
+            )}
             <Link to="/create">
               <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold gap-1.5 rounded-xl h-10 px-5">
                 <Plus className="w-4 h-4" />
