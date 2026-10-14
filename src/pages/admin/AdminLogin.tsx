@@ -10,17 +10,18 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const { login } = useAdminAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (login(email, password)) {
-      navigate("/admin");
-    } else {
-      setError("Неверный email или пароль");
-    }
+    setBusy(true);
+    const res = await login(email, password);
+    setBusy(false);
+    if (res.ok) navigate("/admin");
+    else setError(res.error ?? "Неверный email или пароль");
   };
 
   return (
