@@ -71,7 +71,7 @@ export default function AdminLogin() {
               <p className="text-sm text-destructive font-medium">{error}</p>
             )}
 
-            <Button type="submit" className="w-full font-bold">
+            <Button type="submit" className="w-full font-bold" disabled={busy}>
               Войти
             </Button>
           </form>
