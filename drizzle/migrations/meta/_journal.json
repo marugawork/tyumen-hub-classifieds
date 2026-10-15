@@ -8,6 +8,13 @@
       "when": 1791958507532,
       "tag": "0000_bootstrap_super_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792043218881,
+      "tag": "0001_listing_photos_policies",
+      "breakpoints": true
     }
   ]
 }

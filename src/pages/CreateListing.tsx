@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Upload, Check, Sparkles, TrendingUp, Loader2 } from "lucide-react";
+import { ChevronRight, Upload, Check, Sparkles, TrendingUp, Loader2, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { uploadListingPhoto, deleteListingPhoto, MAX_PHOTOS } from "@/lib/listingPhotos";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -14,6 +16,9 @@ export default function CreateListing() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [publishing, setPublishing] = useState(false);
+  const { user } = useAuth();
+  const [previews, setPreviews] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState(0);
 
   const [aiSeed, setAiSeed] = useState("");
   const [aiBusy, setAiBusy] = useState<"gen" | "price" | null>(null);
@@ -86,12 +91,52 @@ export default function CreateListing() {
     return form.contactName && form.contactPhone && form.district;
   };
 
+  const handleFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    if (!user) {
+      toast({ title: "Войдите, чтобы добавить фото", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
+    const room = MAX_PHOTOS - form.photos.length;
+    const list = Array.from(files).slice(0, Math.max(0, room));
+    if (!list.length) {
+      toast({ title: `Не больше ${MAX_PHOTOS} фото`, variant: "destructive" });
+      return;
+    }
+    setUploading(n => n + list.length);
+    await Promise.all(list.map(async file => {
+      try {
+        const path = await uploadListingPhoto(user.id, file);
+        setPreviews(prev => ({ ...prev, [path]: URL.createObjectURL(file) }));
+        setForm(prev => ({ ...prev, photos: [...prev.photos, path] }));
+      } catch (e) {
+        toast({ title: "Фото не загружено", description: e instanceof Error ? e.message : file.name, variant: "destructive" });
+      } finally {
+        setUploading(n => n - 1);
+      }
+    }));
+  };
+
+  const removePhoto = (path: string) => {
+    setForm(prev => ({ ...prev, photos: prev.photos.filter(p => p !== path) }));
+    deleteListingPhoto(path).catch(() => {});
+  };
+
   const publish = async () => {
+    if (!user) {
+      toast({ title: "Войдите, чтобы опубликовать объявление", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
+    if (uploading > 0) {
+      toast({ title: "Дождитесь загрузки фото" });
+      return;
+    }
     setPublishing(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       const payload = {
-        author_id: user?.id ?? null,
+        author_id: user.id,
         author_name: form.contactName,
         author_type: "private",
         title: form.title,
@@ -258,10 +303,30 @@ export default function CreateListing() {
             </div>
             <div>
               <label className="text-sm font-bold text-foreground">Фотографии</label>
-              <div className="mt-1 border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-accent/30 transition-colors cursor-pointer">
-                <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">Перетащите фото или нажмите</p>
-              </div>
+              <label
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
+                className="mt-1 block border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-accent/30 transition-colors cursor-pointer"
+              >
+                <input type="file" accept="image/*" multiple className="sr-only" onChange={e => { handleFiles(e.target.files); e.target.value = ""; }} />
+                {uploading > 0 ? <Loader2 className="w-8 h-8 mx-auto text-muted-foreground mb-2 animate-spin" /> : <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />}
+                <p className="text-sm text-muted-foreground">
+                  {uploading > 0 ? "Загрузка…" : `Перетащите фото или нажмите (до ${MAX_PHOTOS}, первое — обложка)`}
+                </p>
+              </label>
+              {form.photos.length > 0 && (
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 mt-3">
+                  {form.photos.map((p, i) => (
+                    <div key={p} className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border">
+                      <img src={previews[p]} alt={`Фото ${i + 1}`} className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => removePhoto(p)} aria-label="Удалить фото"
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-background/90 text-foreground flex items-center justify-center">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex flex-wrap gap-3">
               {[{ key: "urgent" as const, label: "Срочно" }, { key: "bargain" as const, label: "Торг" }, { key: "delivery" as const, label: "Доставка" }].map(f => (

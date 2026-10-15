@@ -5,6 +5,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { listings as staticListings } from "@/data/listings";
 import type { Listing } from "@/data/listings";
+import { resolvePhotoUrls, isStoragePath } from "@/lib/listingPhotos";
 
 export interface DbListing {
   id: string;
@@ -91,7 +92,11 @@ export async function fetchListings(params: FetchListingsParams = {}): Promise<L
 
     const rows = (data ?? []) as unknown as DbListing[];
     if (rows.length === 0) return filterStatic(params);
-    return rows.map(dbToListing);
+    const urls = await resolvePhotoUrls(rows.flatMap(r => r.photos ?? []));
+    return rows.map(r => dbToListing({
+      ...r,
+      photos: (r.photos ?? []).map(ph => (isStoragePath(ph) ? urls[ph] : ph)).filter(Boolean) as string[],
+    }));
   } catch {
     return filterStatic(params);
   }
