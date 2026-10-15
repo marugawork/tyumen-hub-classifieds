@@ -42,7 +42,7 @@ export default function CategoryGrid() {
             to={`/category/${cat.slug}`}
             className="flex flex-col items-center text-center group cursor-pointer"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 mb-3 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 mb-3">
               {imgSrc ? (
                 <img src={imgSrc} alt={cat.name} className="w-full h-full object-contain drop-shadow-none" loading="lazy" />
               ) : (

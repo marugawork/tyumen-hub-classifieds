@@ -104,7 +104,7 @@ export default function ListingPage() {
             <AdBanner format="horizontal" />
 
             {/* Title + Price */}
-            <div className={`${isVip ? "bg-card rounded-2xl border-2 border-vip p-6 animate-vip-glow" : ""}`}>
+            <div className={`${isVip ? "bg-card rounded-2xl border-2 border-vip p-6" : ""}`}>
               <div className="flex flex-wrap gap-2 mb-3">
                 {isVip && <span className="badge-vip flex items-center gap-1"><Crown className="w-3 h-3" />VIP</span>}
                 {listing.flags.urgent && <span className="badge-urgent">Срочно</span>}
@@ -166,7 +166,7 @@ export default function ListingPage() {
 
             {/* Share panel */}
             {showShare && (
-              <div className="bg-card rounded-xl border border-border p-4 animate-fade-in">
+              <div className="bg-card rounded-xl border border-border p-4">
                 <h3 className="font-bold text-foreground mb-3">Поделиться</h3>
                 <div className="flex gap-2 flex-wrap">
                   <a
@@ -196,7 +196,7 @@ export default function ListingPage() {
 
             {/* Report panel */}
             {showReport && (
-              <div className="bg-card rounded-xl border border-border p-4 animate-fade-in">
+              <div className="bg-card rounded-xl border border-border p-4">
                 <h3 className="font-bold text-foreground mb-3">Причина жалобы</h3>
                 <div className="space-y-1">
                   {["Мошенничество", "Запрещённый товар", "Неактуальное", "Неверная категория", "Другое"].map(reason => (

@@ -33,13 +33,13 @@ function ListingCardImpl({ listing, compact }: ListingCardProps) {
   const isVip = listing.vip;
 
   return (
-    <div className={`group animate-fade-in ${isVip ? "listing-card-vip" : "listing-card"}`}>
+    <div className={`group ${isVip ? "listing-card-vip" : "listing-card"}`}>
       <Link to={`/listing/${listing.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <img
             src={listing.photos[0]}
             alt={listing.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover"
             loading="lazy"
             decoding="async"
           />
