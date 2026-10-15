@@ -47,8 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { email, logout } = useAdminAuth();
   const unreadCount = adminNotifications.filter((n) => !n.read).length;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/admin/login");
   };
 
