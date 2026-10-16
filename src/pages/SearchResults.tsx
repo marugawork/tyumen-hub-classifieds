@@ -7,6 +7,7 @@ import FilterPanel, { type FilterValues } from "@/components/FilterPanel";
 import SearchBar from "@/components/SearchBar";
 import InfiniteListingGrid from "@/components/InfiniteListingGrid";
 import AdBanner from "@/components/AdBanner";
+import SmartSearch from "@/components/SmartSearch";
 import { filterListings } from "@/data/listings";
 import { useDistrict } from "@/contexts/DistrictContext";
 import { slugToDistrict } from "@/data/districts";
@@ -55,6 +56,7 @@ export default function SearchResults() {
         <div className="mb-6">
           <SearchBar compact initialQuery={query} />
         </div>
+        <SmartSearch key={query} initialText={query} district={selectedDistrict} />
         <BreadcrumbNav crumbs={[
           ...(districtLabel ? [{ label: "Нефтеюганск", href: "/" }] : []),
           { label: crumbLabel },
