@@ -62,6 +62,48 @@ export type Database = {
         }
         Relationships: []
       }
+      city_posts: {
+        Row: {
+          author_id: string | null
+          body: string
+          city: string
+          created_at: string
+          district: string | null
+          event_date: string | null
+          id: string
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          body?: string
+          city?: string
+          created_at?: string
+          district?: string | null
+          event_date?: string | null
+          id?: string
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          city?: string
+          created_at?: string
+          district?: string | null
+          event_date?: string | null
+          id?: string
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       fraud_flags: {
         Row: {
           created_at: string

@@ -15,6 +15,13 @@
       "when": 1792043218881,
       "tag": "0001_listing_photos_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792197717909,
+      "tag": "0002_create_city_posts",
+      "breakpoints": true
     }
   ]
 }
