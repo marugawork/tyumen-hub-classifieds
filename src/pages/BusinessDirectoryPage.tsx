@@ -5,7 +5,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { supabase } from "@/integrations/supabase/client";
-import { districts } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
 
 export interface BusinessProfileRow {
@@ -124,5 +123,3 @@ export default function BusinessDirectoryPage() {
     </div>
   );
 }
-
-export { districts };
