@@ -6,7 +6,7 @@ import {
   LayoutDashboard, FileText, ShieldCheck, Users, Building2, Megaphone,
   Code, TrendingUp, DollarSign, Grid3X3, MapPin, Settings, ScrollText,
   LogOut, Bell, ChevronLeft, ChevronRight, Menu, Zap, BarChart3, Sparkles,
-  Upload, Search, Target, LineChart, Newspaper,
+  Upload, Search, Target, LineChart,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -29,7 +29,6 @@ const navItems = [
   { path: "/admin/moderation", icon: ShieldCheck, label: "Модерация", badge: 8 },
   { path: "/admin/users", icon: Users, label: "Пользователи" },
   { path: "/admin/business", icon: Building2, label: "Бизнес-аккаунты" },
-  { path: "/admin/city-content", icon: Newspaper, label: "Городской контент" },
   { path: "/admin/ads", icon: Megaphone, label: "Реклама и баннеры" },
   { path: "/admin/direct-ads", icon: Code, label: "Direct / код рекламы" },
   { path: "/admin/promotion", icon: TrendingUp, label: "Продвижение" },
