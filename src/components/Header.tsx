@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, User, Plus, Menu, X, Crown, LogOut } from "lucide-react";
+import { Heart, MessageCircle, User, Plus, Menu, X, Crown, LogOut, Building2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -53,6 +53,13 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
+            <Link
+              to="/business"
+              className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden sm:flex"
+              title="Компании"
+            >
+              <Building2 className="w-5 h-5" />
+            </Link>
             <Link
               to="/favorites"
               className="relative p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -113,7 +120,10 @@ export default function Header() {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="pb-4 md:hidden animate-fade-in">
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
+              <Link to="/business" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                <Building2 className="w-4 h-4" /> Компании
+              </Link>
               <Link to="/messages" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
                 <MessageCircle className="w-4 h-4" /> Сообщения
               </Link>
