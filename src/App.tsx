@@ -24,6 +24,8 @@ const PricingPage = lazy(() => import("./pages/PricingPage"));
 const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const PromotePage = lazy(() => import("./pages/PromotePage"));
 const BusinessProfilePage = lazy(() => import("./pages/BusinessProfilePage"));
+const BusinessDirectoryPage = lazy(() => import("./pages/BusinessDirectoryPage"));
+const BusinessPage = lazy(() => import("./pages/BusinessPage"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
 const MyListingsPage = lazy(() => import("./pages/MyListingsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -55,6 +57,7 @@ const AdminGrowthCenter = lazy(() => import("./pages/admin/AdminGrowthCenter"));
 const AdminAIModeration = lazy(() => import("./pages/admin/AdminAIModeration"));
 const AdminAntiFraud = lazy(() => import("./pages/admin/AdminAntiFraud"));
 const AdminModerationQueue = lazy(() => import("./pages/admin/AdminModerationQueue"));
+const AdminCityContent = lazy(() => import("./pages/admin/AdminCityContent"));
 
 
 const queryClient = new QueryClient({
@@ -104,6 +107,8 @@ const App = () => (
                 <Route path="/promote/:id" element={<PromotePage />} />
                 <Route path="/my-listings" element={<MyListingsPage />} />
                 <Route path="/business-profile" element={<BusinessProfilePage />} />
+                <Route path="/business" element={<BusinessDirectoryPage />} />
+                <Route path="/business/:id" element={<BusinessPage />} />
 
                 {/* Admin routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
@@ -132,6 +137,7 @@ const App = () => (
                 <Route path="/admin/ai-moderation" element={<AdminGuard><AdminAIModeration /></AdminGuard>} />
                 <Route path="/admin/anti-fraud" element={<AdminGuard><AdminAntiFraud /></AdminGuard>} />
                 <Route path="/admin/moderation-queue" element={<AdminGuard><AdminModerationQueue /></AdminGuard>} />
+                <Route path="/admin/city-content" element={<AdminGuard><AdminCityContent /></AdminGuard>} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

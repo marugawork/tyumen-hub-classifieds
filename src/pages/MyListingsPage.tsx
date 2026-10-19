@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Crown, TrendingUp, Zap, Eye, Phone, ArrowUp, Plus } from "lucide-react";
+import { Crown, TrendingUp, Zap, Eye, ArrowUp, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
