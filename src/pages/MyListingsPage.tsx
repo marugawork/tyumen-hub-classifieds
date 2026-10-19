@@ -167,9 +167,6 @@ export default function MyListingsPage() {
 
                   <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{l.views}</span>
-                    {l.phoneVisibleCount !== undefined && (
-                      <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{l.phoneVisibleCount}</span>
-                    )}
                   </div>
                 </div>
 
