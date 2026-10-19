@@ -22,6 +22,13 @@
       "when": 1792197717909,
       "tag": "0002_create_city_posts",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792378431094,
+      "tag": "0003_deprecate_city_posts",
+      "breakpoints": true
     }
   ]
 }
