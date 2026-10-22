@@ -303,8 +303,17 @@ export type Database = {
           author_id: string | null
           author_name: string
           author_type: string
+          car_body: string | null
+          car_brand: string | null
+          car_drive: string | null
+          car_engine: string | null
+          car_mileage: number | null
+          car_model: string | null
+          car_transmission: string | null
+          car_year: number | null
           category_id: string
           city: string
+          condition: string | null
           created_at: string
           currency: string
           description: string
@@ -319,6 +328,7 @@ export type Database = {
           promotion_type: string | null
           risk_level: string | null
           status: string
+          subcategory_id: string | null
           title: string
           updated_at: string
           urgent: boolean
@@ -329,8 +339,17 @@ export type Database = {
           author_id?: string | null
           author_name?: string
           author_type?: string
+          car_body?: string | null
+          car_brand?: string | null
+          car_drive?: string | null
+          car_engine?: string | null
+          car_mileage?: number | null
+          car_model?: string | null
+          car_transmission?: string | null
+          car_year?: number | null
           category_id: string
           city?: string
+          condition?: string | null
           created_at?: string
           currency?: string
           description?: string
@@ -345,6 +364,7 @@ export type Database = {
           promotion_type?: string | null
           risk_level?: string | null
           status?: string
+          subcategory_id?: string | null
           title: string
           updated_at?: string
           urgent?: boolean
@@ -355,8 +375,17 @@ export type Database = {
           author_id?: string | null
           author_name?: string
           author_type?: string
+          car_body?: string | null
+          car_brand?: string | null
+          car_drive?: string | null
+          car_engine?: string | null
+          car_mileage?: number | null
+          car_model?: string | null
+          car_transmission?: string | null
+          car_year?: number | null
           category_id?: string
           city?: string
+          condition?: string | null
           created_at?: string
           currency?: string
           description?: string
@@ -371,6 +400,7 @@ export type Database = {
           promotion_type?: string | null
           risk_level?: string | null
           status?: string
+          subcategory_id?: string | null
           title?: string
           updated_at?: string
           urgent?: boolean
