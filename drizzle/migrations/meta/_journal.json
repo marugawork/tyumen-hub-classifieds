@@ -29,6 +29,13 @@
       "when": 1792378431094,
       "tag": "0003_deprecate_city_posts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792683112897,
+      "tag": "0004_add_car_fields",
+      "breakpoints": true
     }
   ]
 }
