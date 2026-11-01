@@ -11,6 +11,8 @@ import { districts } from "@/data/districts";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { CarFormFields, emptyCarForm } from "@/components/CarFields";
+import { OTHER, validateCar } from "@/data/cars";
 
 export default function CreateListing() {
   const navigate = useNavigate();
@@ -31,6 +33,11 @@ export default function CreateListing() {
   });
 
   const selectedCat = categories.find(c => c.id === form.categoryId);
+  const [car, setCar] = useState(emptyCarForm);
+  const isCar = form.categoryId === "transport" && form.subcategoryId === "auto";
+  const carBrand = car.brand === OTHER ? car.customBrand.trim() : car.brand;
+  const carModel = car.model === OTHER ? car.customModel.trim() : car.model;
+  const carError = isCar ? validateCar({ brand: carBrand, model: carModel, year: car.year, mileage: car.mileage, condition: form.condition }) : null;
   const updateForm = (partial: Partial<typeof form>) => setForm(prev => ({ ...prev, ...partial }));
 
   const runAIGenerate = async () => {
@@ -87,7 +94,7 @@ export default function CreateListing() {
 
   const canProceed = () => {
     if (step === 1) return !!form.categoryId;
-    if (step === 2) return form.title.length >= 5 && form.description.length >= 10;
+    if (step === 2) return form.title.length >= 5 && form.description.length >= 10 && !carError;
     return form.contactName && form.contactPhone && form.district;
   };
 
@@ -124,6 +131,7 @@ export default function CreateListing() {
   };
 
   const publish = async () => {
+    if (carError) { toast({ title: carError, variant: "destructive" }); return; }
     if (!user) {
       toast({ title: "Войдите, чтобы опубликовать объявление", variant: "destructive" });
       navigate("/auth");
@@ -143,6 +151,9 @@ export default function CreateListing() {
         description: form.description,
         price: Number(form.price) || 0,
         category_id: form.categoryId,
+        subcategory_id: form.subcategoryId || null,
+        condition: form.condition,
+        ...(isCar ? { car_brand: carBrand, car_model: carModel, car_year: Number(car.year), car_mileage: car.mileage === "" ? null : Number(car.mileage), car_body: car.body || null, car_transmission: car.transmission || null, car_engine: car.engine || null, car_drive: car.drive || null } : {}),
         district: form.district,
         phone: form.contactPhone,
         photos: form.photos,
@@ -239,6 +250,7 @@ export default function CreateListing() {
 
         {step === 2 && (
           <div className="space-y-5 animate-fade-in">
+            {isCar && <CarFormFields value={car} onChange={setCar} />}
             {/* AI Generator */}
             <div className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -296,7 +308,7 @@ export default function CreateListing() {
                     <button key={c} onClick={() => updateForm({ condition: c })}
                       className={`flex-1 h-11 rounded-xl border text-sm font-bold transition-colors ${
                         form.condition === c ? "bg-accent text-accent-foreground border-accent" : "bg-background text-foreground border-input"
-                      }`}>{c === "new" ? "Новое" : "Б/у"}</button>
+                      }`}>{isCar ? (c === "new" ? "Новый" : "С пробегом") : (c === "new" ? "Новое" : "Б/у")}</button>
                   ))}
                 </div>
               </div>
