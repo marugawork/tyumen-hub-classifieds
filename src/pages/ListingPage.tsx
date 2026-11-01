@@ -1,6 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { Heart, Flag, MapPin, Eye, Clock, Crown, Share2, Copy, Calendar, RefreshCw, Phone } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchListingById } from "@/lib/dbListings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PromoteModal from "@/components/PromoteModal";
@@ -29,7 +31,9 @@ function districtFullLabel(d: string): string {
 
 export default function ListingPage() {
   const { id } = useParams();
-  const listing = id ? getListingById(id) : undefined;
+  const isCloudId = Boolean(id && /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id));
+  const cloud = useQuery({ queryKey: ["listing", id], queryFn: () => id ? fetchListingById(id) : Promise.resolve(null), enabled: isCloudId });
+  const listing = isCloudId ? cloud.data : id ? getListingById(id) : undefined;
   const { isFavorite, toggleFavorite } = useFavorites();
   const { setSelectedDistrict } = useDistrict();
   const [showReport, setShowReport] = useState(false);
@@ -41,7 +45,7 @@ export default function ListingPage() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container-main py-20 text-center text-muted-foreground">
-          <p className="text-xl">Объявление не найдено</p>
+          <p className="text-xl">{isCloudId && cloud.isPending ? "Загрузка…" : cloud.isError ? "Не удалось загрузить объявление" : "Объявление не найдено"}</p>
           <Link to="/" className="text-accent mt-4 inline-block font-semibold">На главную</Link>
         </div>
         <Footer />
@@ -57,11 +61,12 @@ export default function ListingPage() {
   const dSlug = districtToSlug(listing.district);
 
   // Similar in same district first, then by category
-  const districtListings = listings
+  const relatedSource = isCloudId ? [] : listings;
+  const districtListings = relatedSource
     .filter(l => l.district === listing.district && l.id !== listing.id && l.categoryId === listing.categoryId)
     .slice(0, 4);
 
-  const similarListings = listings
+  const similarListings = relatedSource
     .filter(l => l.categoryId === listing.categoryId && l.id !== listing.id && l.district !== listing.district)
     .slice(0, 4);
 
@@ -84,7 +89,13 @@ export default function ListingPage() {
     setShowShare(false);
   };
 
-  const sellerListingsCount = listings.filter(l => l.authorName === listing.authorName).length;
+  const sellerListingsCount = relatedSource.filter(l => l.authorName === listing.authorName).length;
+  const isCar = listing.subcategoryId === "auto";
+  const carRows = [
+    ["Марка", listing.car_brand], ["Модель", listing.car_model], ["Год выпуска", listing.car_year],
+    ["Пробег", listing.car_mileage == null ? null : `${listing.car_mileage.toLocaleString("ru-RU")} км`],
+    ["Кузов", listing.car_body], ["Коробка передач", listing.car_transmission], ["Двигатель", listing.car_engine], ["Привод", listing.car_drive],
+  ];
 
   const handleDistrictClick = () => {
     setSelectedDistrict(listing.district);
@@ -111,7 +122,7 @@ export default function ListingPage() {
                 {listing.flags.bargain && <span className="badge-bargain">Торг</span>}
                 {listing.flags.delivery && <span className="badge-delivery">Доставка</span>}
                 <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-secondary text-secondary-foreground uppercase">
-                  {listing.condition === "new" ? "Новое" : "Б/у"}
+                  {isCar ? (listing.condition === "new" ? "Новый" : "С пробегом") : (listing.condition === "new" ? "Новое" : "Б/у")}
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-foreground mb-3">{listing.title}</h1>
@@ -225,7 +236,8 @@ export default function ListingPage() {
                 <span className="text-foreground font-medium">{category?.name}</span>
                 {subcategory && (<><span className="text-muted-foreground">Подкатегория</span><span className="text-foreground font-medium">{subcategory.name}</span></>)}
                 <span className="text-muted-foreground">Состояние</span>
-                <span className="text-foreground font-medium">{listing.condition === "new" ? "Новое" : "Б/у"}</span>
+                <span className="text-foreground font-medium">{isCar ? (listing.condition === "new" ? "Новый" : "С пробегом") : (listing.condition === "new" ? "Новое" : "Б/у")}</span>
+                {isCar && carRows.filter(([, value]) => value != null && value !== "").map(([label, value]) => <div key={String(label)} className="contents"><span className="text-muted-foreground">{label}</span><span className="text-foreground font-medium break-words">{value}</span></div>)}
                 <span className="text-muted-foreground">Продавец</span>
                 <span className="text-foreground font-medium">{listing.authorType === "business" ? "Компания" : "Частное лицо"}</span>
                 <span className="text-muted-foreground">Район</span>

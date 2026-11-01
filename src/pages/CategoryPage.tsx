@@ -11,6 +11,7 @@ import { getCategoryBySlug, getSubcategoryBySlug, categories } from "@/data/cate
 import { filterListings, listings } from "@/data/listings";
 import { slugToDistrict } from "@/data/districts";
 import { useDistrict } from "@/contexts/DistrictContext";
+import CarListings from "@/components/CarListings";
 
 export default function CategoryPage() {
   const { categorySlug, subcategorySlug } = useParams();
@@ -18,7 +19,8 @@ export default function CategoryPage() {
   const districtSlugParam = searchParams.get("district") || "";
   const { selectedDistrict, districtLabel, setSelectedDistrict } = useDistrict();
   const category = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
-  const subcategory = category && subcategorySlug ? getSubcategoryBySlug(categorySlug!, subcategorySlug) : undefined;
+  const subcategory = category && categorySlug && subcategorySlug ? getSubcategoryBySlug(categorySlug, subcategorySlug) : undefined;
+  const isCar = category?.id === "transport" && subcategory?.id === "auto";
 
   useEffect(() => {
     if (!districtSlugParam) return;
@@ -128,7 +130,7 @@ export default function CategoryPage() {
           <Icon className="w-6 h-6" style={{ color: `hsl(var(--cat-${category.colorVar.replace("cat-", "")}))` }} />
           <div>
             <h1 className="text-2xl font-extrabold text-foreground">{headingName}</h1>
-            <p className="text-sm text-muted-foreground">{results.length} объявлений</p>
+            {!isCar && <p className="text-sm text-muted-foreground">{results.length} объявлений</p>}
           </div>
         </div>
         {!subcategory && category.subcategories.length > 0 && (
@@ -139,7 +141,7 @@ export default function CategoryPage() {
             ))}
           </div>
         )}
-        <FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
+        {isCar ? <CarListings /> : <><FilterPanel filters={filters} onChange={handleFiltersChange} showCategory={false} />
         <div className="mt-4">
           <InfiniteListingGrid listings={results} resetKey={infiniteResetKey} />
         </div>
@@ -148,6 +150,7 @@ export default function CategoryPage() {
             <p className="text-lg">Объявления не найдены</p>
           </div>
         )}
+        </>}
       </div>
       <Footer />
     </div>
