@@ -3,6 +3,14 @@ import { districts } from "./districts";
 export type PromotionType = "vip" | "top" | "urgent" | "raise" | null;
 
 export interface Listing {
+  car_brand?: string | null;
+  car_model?: string | null;
+  car_year?: number | null;
+  car_mileage?: number | null;
+  car_body?: string | null;
+  car_transmission?: string | null;
+  car_engine?: string | null;
+  car_drive?: string | null;
   id: string;
   title: string;
   description: string;
