@@ -29,4 +29,7 @@ describe("car categories", () => {
     const f = carFiltersFromParams(new URLSearchParams("brand=Kia&model=Camry&yearMin=2010"));
     expect(f).toEqual({ brand: "Kia", model: undefined, yearMin: 2010 });
   });
+  it("rejects invalid mileage even on a new car", () => {
+    expect(validateCar({ brand: "Toyota", model: "Camry", year: "2025", mileage: "-1", condition: "new" })).toBe("Укажите пробег");
+  });
 });

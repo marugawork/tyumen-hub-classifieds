@@ -90,7 +90,7 @@ export function validateCar(c: { brand: string; model: string; year: string; mil
   if (c.brand.length > 60 || c.model.length > 80) return "Слишком длинное название";
   const y = Number(c.year);
   if (!c.year || !Number.isInteger(y) || y < 1900 || y > CURRENT_YEAR + 1) return "Укажите корректный год выпуска";
-  if (c.condition === "used") {
+  if (c.condition === "used" || c.mileage !== "") {
     const m = Number(c.mileage);
     if (c.mileage === "" || !Number.isInteger(m) || m < 0 || m > 5_000_000) return "Укажите пробег";
   }
