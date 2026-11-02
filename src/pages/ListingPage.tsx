@@ -306,8 +306,9 @@ export default function ListingPage() {
               rating={listing.authorRating}
               verified={listing.authorVerified}
               description={listing.authorDescription}
-              listingsCount={sellerListingsCount}
-              registeredDate="Март 2023"
+              listingsCount={isCloudId ? undefined : sellerListingsCount}
+              realData={isCloudId}
+              registeredDate={isCloudId ? undefined : "Март 2023"}
             />
             <AdBanner format="vip" />
           </div>
