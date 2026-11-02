@@ -64,7 +64,7 @@ export default function SearchBar({ initialQuery = "", compact = false }: Search
         placeholder="Что ищете? Например: квартира, iPhone, автомобиль..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className={`flex-1 ${h} px-4 md:px-6 ${rounded} border border-r-0 border-input bg-card ${textSize} text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all`}
+        className={`flex-1 min-w-0 ${h} px-4 md:px-6 ${rounded} border border-r-0 border-input bg-card ${textSize} text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all`}
       />
       <div className={`relative ${h} shrink-0`}>
         <MapPin className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
