@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 const navItems = [
   { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { path: "/admin/growth-center", icon: Zap, label: "Growth Center", accent: true },
+  { path: "/admin/ai-control", icon: Brain, label: "AI Control Center", accent: true },
   { path: "/admin/growth", icon: Zap, label: "Growth Engine" },
   { path: "/admin/growth/analytics", icon: BarChart3, label: "Growth Analytics" },
   { path: "/admin/growth/recommendations", icon: Sparkles, label: "AI-рекомендации" },
