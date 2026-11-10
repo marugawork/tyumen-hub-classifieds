@@ -53,6 +53,7 @@ const AdminGrowthPromotionAdvisor = lazy(() => import("./pages/admin/AdminGrowth
 const AdminGrowthTrends = lazy(() => import("./pages/admin/AdminGrowthTrends"));
 const AdminGrowthCenter = lazy(() => import("./pages/admin/AdminGrowthCenter"));
 const AdminAIModeration = lazy(() => import("./pages/admin/AdminAIModeration"));
+const AdminAIControl = lazy(() => import("./pages/admin/AdminAIControl"));
 const AdminAntiFraud = lazy(() => import("./pages/admin/AdminAntiFraud"));
 const AdminModerationQueue = lazy(() => import("./pages/admin/AdminModerationQueue"));
 
@@ -129,6 +130,7 @@ const App = () => (
                 <Route path="/admin/growth/promotion-advisor" element={<AdminGuard><AdminGrowthPromotionAdvisor /></AdminGuard>} />
                 <Route path="/admin/growth/trends" element={<AdminGuard><AdminGrowthTrends /></AdminGuard>} />
                 <Route path="/admin/growth-center" element={<AdminGuard><AdminGrowthCenter /></AdminGuard>} />
+                <Route path="/admin/ai-control" element={<AdminGuard><AdminAIControl /></AdminGuard>} />
                 <Route path="/admin/ai-moderation" element={<AdminGuard><AdminAIModeration /></AdminGuard>} />
                 <Route path="/admin/anti-fraud" element={<AdminGuard><AdminAntiFraud /></AdminGuard>} />
                 <Route path="/admin/moderation-queue" element={<AdminGuard><AdminModerationQueue /></AdminGuard>} />
