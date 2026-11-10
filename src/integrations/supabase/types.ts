@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_module_config: {
+        Row: {
+          daily_limit: number
+          description: string
+          enabled: boolean
+          model: string
+          module: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          daily_limit?: number
+          description?: string
+          enabled?: boolean
+          model: string
+          module: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          daily_limit?: number
+          description?: string
+          enabled?: boolean
+          model?: string
+          module?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      ai_usage_log: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error: string | null
+          id: string
+          model: string
+          module: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          model: string
+          module: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          model?: string
+          module?: string
+          status?: string
+        }
+        Relationships: []
+      }
       business_profiles: {
         Row: {
           city: string
