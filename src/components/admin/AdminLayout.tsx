@@ -6,7 +6,7 @@ import {
   LayoutDashboard, FileText, ShieldCheck, Users, Building2, Megaphone,
   Code, TrendingUp, DollarSign, Grid3X3, MapPin, Settings, ScrollText,
   LogOut, Bell, ChevronLeft, ChevronRight, Menu, Zap, BarChart3, Sparkles,
-  Upload, Search, Target, LineChart,
+  Upload, Search, Target, LineChart, Brain,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
