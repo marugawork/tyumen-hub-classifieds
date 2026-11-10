@@ -1,66 +1,54 @@
 // AI Moderation Engine — scores listings for risk, fraud, prohibited content.
-// City-independent: pass city via payload, no hard-coded geography.
+// Uses the shared AI service layer (_shared/ai-service.ts).
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { AiError, callAiModule } from "../_shared/ai-service.ts";
 
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+type ModerationResult = {
+  moderation_score: number;
+  fraud_score: number;
+  risk_level: "low" | "medium" | "high" | "critical";
+  status: "approved" | "review_required" | "blocked";
+  violations: string[];
+  explanation: string;
+};
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
     const { title, description, price, category, photos_count } = await req.json();
-    if (!title || !description) {
-      return new Response(JSON.stringify({ error: "title and description required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    if (!title || !description) return json({ error: "title and description required" }, 400);
 
-    const res = await fetch(GATEWAY, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: "Ты — модератор досок объявлений. Анализируешь риски: запрещённые товары, наркотики, оружие, скам, фишинг, фейковые услуги, поддельные вакансии, дубли спама. Возвращай только структурированный JSON через инструмент." },
-          { role: "user", content: `Категория: ${category ?? "не указана"}\nЦена: ${price ?? "не указана"}\nФото: ${photos_count ?? 0}\nЗаголовок: ${title}\nОписание: ${description}` },
-        ],
-        tools: [{
-          type: "function",
-          function: {
-            name: "moderate_listing",
-            description: "Вернуть оценку модерации",
-            parameters: {
-              type: "object",
-              properties: {
-                moderation_score: { type: "number" },
-                fraud_score: { type: "number" },
-                risk_level: { type: "string", enum: ["low", "medium", "high", "critical"] },
-                status: { type: "string", enum: ["approved", "review_required", "blocked"] },
-                violations: { type: "array", items: { type: "string" } },
-                explanation: { type: "string" },
-              },
-              required: ["moderation_score", "fraud_score", "risk_level", "status", "violations", "explanation"],
-              additionalProperties: false,
-            },
+    const result = await callAiModule<ModerationResult>({
+      module: "ai-moderation",
+      system: "Ты — модератор досок объявлений. Анализируешь риски: запрещённые товары, наркотики, оружие, скам, фишинг, фейковые услуги, поддельные вакансии, дубли спама. Возвращай только структурированный JSON через инструмент.",
+      user: `Категория: ${String(category ?? "не указана").slice(0, 100)}\nЦена: ${price ?? "не указана"}\nФото: ${photos_count ?? 0}\nЗаголовок: ${String(title).slice(0, 200)}\nОписание: ${String(description).slice(0, 3000)}`,
+      tool: {
+        name: "moderate_listing",
+        description: "Вернуть оценку модерации",
+        parameters: {
+          type: "object",
+          properties: {
+            moderation_score: { type: "number" },
+            fraud_score: { type: "number" },
+            risk_level: { type: "string", enum: ["low", "medium", "high", "critical"] },
+            status: { type: "string", enum: ["approved", "review_required", "blocked"] },
+            violations: { type: "array", items: { type: "string" } },
+            explanation: { type: "string" },
           },
-        }],
-        tool_choice: { type: "function", function: { name: "moderate_listing" } },
-      }),
+          required: ["moderation_score", "fraud_score", "risk_level", "status", "violations", "explanation"],
+          additionalProperties: false,
+        },
+      },
+      abortSignal: req.signal,
     });
 
-    if (res.status === 429) return new Response(JSON.stringify({ error: "Rate limit" }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    if (res.status === 402) return new Response(JSON.stringify({ error: "Payment required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    if (!res.ok) throw new Error(`Gateway ${res.status}: ${await res.text()}`);
-
-    const data = await res.json();
-    const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
-    const parsed = args ? JSON.parse(args) : null;
-    return new Response(JSON.stringify(parsed), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return json(result);
   } catch (e) {
+    if (e instanceof AiError) return json({ error: e.message }, e.status);
     console.error("ai-moderation error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ error: "Ошибка модерации" }, 500);
   }
 });
